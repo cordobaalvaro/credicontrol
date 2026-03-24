@@ -1,0 +1,84 @@
+.registros-stats-bar {
+  background: var(--gris-50);
+  border: 1px solid var(--gris-200);
+}
+.registros-stat-item .stat-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: var(--gris-500);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.registros-stat-item .stat-value {
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 0.25rem;
+}
+.registros-divider {
+  width: 1px;
+  align-self: stretch;
+  background-color: var(--gris-200);
+}
+.progreso-text {
+  color: var(--azul-info);
+}
+.progreso-completado {
+  color: #198754;
+}
+.empty-state-icon {
+  font-size: 2.5rem;
+  color: var(--gris-400);
+}
+.registro-list-item {
+  border: 1px solid var(--gris-200);
+  background: var(--blanco);
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+.registro-list-item:hover {
+  box-shadow: var(--sombra-md);
+  border-color: var(--verde-claro);
+  transform: translateY(-1px);
+}
+.registro-numero-badge {
+  width: 32px;
+  height: 32px;
+  background: rgba(25, 135, 84, 0.1);
+  color: #198754;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+}
+.registro-monto {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #198754;
+}
+.registro-meta {
+  font-size: 0.75rem;
+  color: var(--gris-500);
+}
+.registro-id-timestamp {
+  font-size: 0.65rem;
+  color: var(--gris-400);
+  margin-top: 2px;
+}
+.btn-action-minimal {
+  border-radius: 6px;
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  transition: var(--transicion-rapida);
+}
+.btn-action-minimal:hover {
+  background: var(--gris-100);
+}
+.btn-action-minimal.edit {
+  color: var(--azul-info);
+}
+.btn-action-minimal.delete {
+  color: var(--rojo-error);
+}

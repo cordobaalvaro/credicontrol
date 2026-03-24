@@ -1,0 +1,11 @@
+.modal-gasto-title {
+    color: #1e293b;
+}
+.modal-gasto-icon-container {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+}
+.modal-gasto-input-group {
+    box-shadow: none;
+}

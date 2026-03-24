@@ -1,0 +1,31 @@
+.gastos-btn-nuevo {
+    border-radius: 10px;
+    color: var(--sidebar-bg, #059669);
+}
+.gastos-card-total {
+    border-radius: 12px;
+    border-left: 4px solid #ef4444;
+}
+.gastos-card-filtro {
+    border-radius: 12px;
+    border-left: 4px solid #3b82f6;
+}
+.gastos-input-mes {
+    border-radius: 8px;
+}
+.gastos-table-card {
+    border-radius: 16px;
+    overflow: hidden;
+}
+.gastos-table-title {
+    color: #374151;
+}
+.gastos-fecha {
+    color: #4b5563;
+}
+.gastos-tipo-badge {
+    border-radius: 6px;
+}
+.gastos-descripcion-cell {
+    max-width: 250px;
+}

@@ -1,0 +1,449 @@
+.modal-detalles-tabla .modal-dialog {
+    max-width: 95%;
+    margin: 0.3rem auto;
+}
+.modal-detalles-tabla .modal-content {
+    border: none;
+    border-radius: 0px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+.modal-detalles-header {
+    background: var(--gradiente-principal);
+    border: none;
+    border-radius: 0px;
+    padding: 0.8rem 1.2rem;
+    color: white;
+    margin: 0;
+}
+.modal-detalles-header .modal-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+}
+.modal-detalles-header .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+.modal-detalles-body {
+    padding: 0.8rem;
+    background-color: var(--gris-50);
+}
+.modal-detalles-tabla .info-section {
+    background: white;
+    border-radius: var(--radio-xs);
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
+    box-shadow: var(--sombra-xs);
+    border-left: 3px solid var(--verde-principal);
+}
+.modal-detalles-tabla .info-section h5 {
+    color: var(--verde-principal);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+.modal-detalles-tabla .info-section h5 i {
+    margin-right: 0.3rem;
+    font-size: 1rem;
+}
+.modal-detalles-tabla .info-grid {
+    gap: 0.4rem 1rem;
+    margin-bottom: 0;
+}
+.modal-detalles-tabla .info-item {
+    display: flex;
+    align-items: center;
+    padding: 0.2rem 0;
+    border-bottom: none;
+    margin-bottom: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+.modal-detalles-tabla .info-item i {
+    color: var(--gris-500);
+    margin-right: 0.4rem;
+    width: 14px;
+    text-align: center;
+    font-size: 0.8rem;
+}
+.modal-detalles-tabla .info-label {
+    font-size: 0.8rem;
+    margin-right: 0.3rem;
+    min-width: auto;
+    text-transform: none;
+    letter-spacing: normal;
+}
+.modal-detalles-tabla .info-value {
+    font-size: 0.8rem;
+    flex: 1;
+}
+.status-badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radio-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+.status-badge.pendiente {
+    background: var(--amarillo-warning);
+    color: var(--gris-900);
+}
+.status-badge.enviado {
+    background: var(--verde-principal);
+    color: white;
+}
+.add-item-section {
+    background: white;
+    border-radius: var(--radio-xs);
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
+    box-shadow: var(--sombra-xs);
+    border: 1px dashed var(--gris-200);
+}
+.add-item-form {
+    background: var(--gris-50);
+    border-radius: var(--radio-xs);
+    padding: 0.8rem;
+    border: 1px solid var(--gris-100);
+}
+.add-item-form .form-control,
+.add-item-form .form-select {
+    border-radius: 3px;
+    border: 1px solid var(--gris-300);
+    padding: 0.4rem;
+    font-size: 0.85rem;
+    height: auto;
+}
+.add-item-form .form-control:focus,
+.add-item-form .form-select:focus {
+    border-color: var(--verde-principal);
+    box-shadow: 0 0 0 0.1rem rgba(25, 135, 84, 0.25);
+}
+.items-table-section {
+    background: white;
+    border-radius: var(--radio-xs);
+    padding: 0.8rem;
+    box-shadow: var(--sombra-xs);
+}
+.items-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--gris-100);
+}
+.items-table-title {
+    color: var(--verde-principal);
+    font-weight: 600;
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+.items-table-title i {
+    margin-right: 0.3rem;
+    font-size: 1rem;
+}
+.table-container {
+    max-height: 250px;
+    overflow-y: auto;
+    border-radius: 3px;
+    border: 1px solid var(--gris-100);
+}
+.items-table {
+    margin: 0;
+    font-size: 0.8rem;
+}
+.items-table thead {
+    background: var(--gradiente-principal);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.items-table th {
+    border: none;
+    font-weight: 600;
+    padding: 0.4rem 0.3rem;
+    text-align: center;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+.items-table td {
+    padding: 0.4rem 0.3rem;
+    border-bottom: 1px solid var(--gris-100);
+    vertical-align: middle;
+    font-size: 0.8rem;
+}
+.items-table tbody tr:hover {
+    background-color: rgba(25, 135, 84, 0.05);
+}
+.modal-detalles-tabla .btn-custom {
+    border-radius: var(--radio-xs);
+    padding: 0.4rem 0.7rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: var(--transicion-rapida);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    text-transform: none;
+    letter-spacing: 0.1px;
+    min-width: 32px;
+    min-height: 32px;
+    justify-content: center;
+}
+.modal-detalles-tabla .btn-custom:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.modal-detalles-tabla .btn-custom:focus {
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    outline: none;
+}
+.modal-detalles-tabla .btn-custom i {
+    font-size: 0.9rem;
+    line-height: 1;
+}
+.modal-detalles-tabla .btn-add {
+    background: var(--verde-principal);
+    color: white;
+    border: 2px solid var(--verde-principal);
+}
+.modal-detalles-tabla .btn-add:hover {
+    background: var(--verde-hover);
+    color: white;
+    border-color: var(--verde-hover);
+}
+.modal-detalles-tabla .btn-edit {
+    background: var(--amarillo-warning);
+    color: var(--gris-900);
+    border: 2px solid var(--amarillo-warning);
+}
+.modal-detalles-tabla .btn-edit:hover {
+    background: #e0a800;
+    color: var(--gris-900);
+    border-color: #e0a800;
+}
+.modal-detalles-tabla .btn-delete {
+    background: var(--rojo-error);
+    color: white;
+    border: 2px solid var(--rojo-error);
+}
+.modal-detalles-tabla .btn-delete:hover {
+    background: var(--rojo-hover);
+    color: white;
+    border-color: var(--rojo-hover);
+}
+.modal-detalles-tabla .btn-send {
+    background: var(--azul-info);
+    color: white;
+    border: 2px solid var(--azul-info);
+}
+.modal-detalles-tabla .btn-send:hover {
+    background: #138496;
+    color: white;
+    border-color: #138496;
+}
+.modal-detalles-tabla .btn-pdf {
+    background: var(--verde-principal);
+    color: white;
+    border: 2px solid var(--verde-principal);
+}
+.modal-detalles-tabla .btn-pdf:hover {
+    background: var(--verde-hover);
+    color: white;
+    border-color: var(--verde-hover);
+}
+.modal-detalles-tabla .btn-secondary {
+    background: var(--gris-500);
+    color: white;
+    border: 2px solid var(--gris-500);
+}
+.modal-detalles-tabla .btn-secondary:hover {
+    background: var(--gris-600);
+    color: white;
+    border-color: var(--gris-600);
+}
+.items-table .btn-custom {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+    min-width: auto;
+    min-height: 28px;
+    white-space: nowrap;
+}
+.items-table .btn-custom i {
+    font-size: 0.75rem;
+    margin-right: 0.2rem;
+}
+.modal-detalles-footer {
+    background: white;
+    padding: 0.8rem 1.2rem;
+    border-top: 1px solid var(--gris-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+.form-group {
+    margin-bottom: 0;
+}
+.form-group label {
+    font-weight: 600;
+    color: var(--gris-600);
+    margin-bottom: 0.2rem;
+    display: block;
+    font-size: 0.8rem;
+}
+@media (max-width: 768px) {
+    .modal-detalles-tabla .modal-dialog {
+        max-width: 98%;
+        margin: 0.1rem auto;
+    }
+    .modal-detalles-header {
+        padding: 0.6rem;
+    }
+    .modal-detalles-body {
+        padding: 0.6rem;
+    }
+    .modal-detalles-tabla .info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+    }
+    .table-container {
+        display: none;
+    }
+    .mobile-cards-container {
+        display: block;
+    }
+    .mobile-item-card {
+        background: white;
+        border-radius: var(--radio-sm);
+        padding: 0.8rem;
+        margin-bottom: 0.6rem;
+        box-shadow: var(--sombra-sm);
+        border-left: 4px solid var(--verde-principal);
+    }
+    .mobile-item-card.item-enviado {
+        border-left-color: var(--verde-principal);
+        background: linear-gradient(135deg,
+                rgba(40, 167, 69, 0.05),
+                rgba(25, 135, 84, 0.05));
+    }
+    .mobile-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.6rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid var(--gris-100);
+    }
+    .mobile-card-title {
+        font-weight: 600;
+        color: var(--verde-principal);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+    }
+    .mobile-card-title i {
+        margin-right: 0.3rem;
+        font-size: 1rem;
+    }
+    .mobile-card-amount {
+        font-weight: 700;
+        color: var(--gris-900);
+        font-size: 1rem;
+    }
+    .mobile-card-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem;
+        margin-bottom: 0.6rem;
+    }
+    .mobile-card-field {
+        display: flex;
+        flex-direction: column;
+    }
+    .mobile-card-field.full-width {
+        grid-column: 1 / -1;
+    }
+    .mobile-field-label {
+        font-size: 0.7rem;
+        color: var(--gris-500);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+        margin-bottom: 0.1rem;
+    }
+    .mobile-field-value {
+        font-size: 0.8rem;
+        color: var(--gris-900);
+        font-weight: 500;
+    }
+    .mobile-card-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.6rem;
+        padding-top: 0.6rem;
+        border-top: 1px solid var(--gris-100);
+    }
+    .mobile-action-buttons {
+        display: flex;
+        gap: 0.3rem;
+    }
+    .mobile-checkbox {
+        display: flex;
+        align-items: center;
+    }
+    .modal-detalles-tabla .btn-custom {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.65rem;
+        white-space: nowrap;
+    }
+    .modal-detalles-tabla .btn-custom i {
+        font-size: 0.7rem;
+        margin-right: 0.2rem;
+    }
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+    }
+}
+@media (min-width: 769px) {
+    .mobile-cards-container {
+        display: none;
+    }
+    .table-container {
+        display: block;
+    }
+}
+.modal-detalles-tabla .modal-content {
+    animation: modalSlideIn 0.2s ease-out;
+}
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

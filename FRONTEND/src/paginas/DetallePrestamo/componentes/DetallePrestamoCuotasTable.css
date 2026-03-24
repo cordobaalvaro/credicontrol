@@ -1,0 +1,59 @@
+.cuotas-table-container {
+  background: white;
+  border-radius: var(--radio-xl);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  box-shadow: var(--sombra-sm);
+}
+.cuotas-table {
+  margin-bottom: 0;
+}
+.cuotas-table thead th {
+  background: var(--gris-50);
+  color: var(--gris-600);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem;
+  border-bottom: 2px solid var(--gris-100);
+}
+.cuotas-table tbody td {
+  padding: 1rem;
+  font-size: 0.95rem;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+.cuota-numero {
+  font-weight: 700;
+  color: var(--gris-400);
+  width: 50px;
+}
+.cuota-monto {
+  font-weight: 600;
+  color: var(--gris-900);
+}
+.cuota-pagado {
+  font-weight: 600;
+  color: var(--verde-principal);
+}
+.cuota-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radio-full);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.cuota-estado-pendiente {
+  background: rgba(100, 116, 139, 0.1);
+  color: var(--gris-600);
+}
+.cuota-estado-cobrado {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+.cuota-estado-completo {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}

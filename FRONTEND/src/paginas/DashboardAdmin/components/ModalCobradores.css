@@ -1,0 +1,14 @@
+.modal-cobradores-body {
+  padding: 1.5rem;
+}
+.btn-cobrador-mobile {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+.btn-password-toggle {
+  border-left: none;
+}
+.select-zonas-multiple {
+  height: 185px;
+}

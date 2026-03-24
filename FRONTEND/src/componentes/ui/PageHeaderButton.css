@@ -1,0 +1,26 @@
+.page-header-button {
+    background: #ffffff !important;
+    border: none !important;
+    color: #15803d !important;
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(21, 128, 61, 0.2);
+    display: flex;
+    align-items: center;
+    border-radius: 12px; 
+}
+.page-header-button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(21, 128, 61, 0.3);
+    color: #15803d !important;
+}
+.page-header-button:disabled {
+    opacity: 0.6 !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+.page-header-button.rounded-xl {
+    border-radius: 12px;
+}

@@ -1,0 +1,70 @@
+import {
+  IconHash,
+  IconId,
+  IconPhone,
+  IconCalendar,
+  IconMapPin,
+  IconBuildingStore,
+  IconHome,
+  IconBuilding,
+  IconMap2,
+  IconCash,
+  IconMap,
+  IconShoppingBag,
+} from "@tabler/icons-react"
+const InfoCard = ({ icon: Icon, label, value }) => (
+  <div className="cliente-info-card">
+    <div className="cliente-info-card-icon">
+      <Icon size={20} stroke={1.5} />
+    </div>
+    <div className="cliente-info-card-content">
+      <span className="cliente-info-card-label">{label}</span>
+      <span className="cliente-info-card-value">{value || "No especificado"}</span>
+    </div>
+  </div>
+)
+const ClienteInfoReadOnly = ({ cliente }) => {
+  const leftColumn = [
+    { icon: IconHash, label: "NÂ° Cliente", value: cliente.numero },
+    { icon: IconId, label: "DNI", value: cliente.dni },
+    { icon: IconPhone, label: "Teléfono", value: cliente.telefono },
+    {
+      icon: IconCalendar,
+      label: "Fecha de Nacimiento",
+      value: cliente.fechaNacimiento ? new Date(cliente.fechaNacimiento).toLocaleDateString() : null,
+    },
+    { icon: IconMapPin, label: "Localidad", value: cliente.localidad },
+    { icon: IconBuildingStore, label: "Dirección Comercial", value: cliente.direccionComercial },
+  ]
+  const rightColumn = [
+    { icon: IconHome, label: "Dirección", value: cliente.direccion },
+    { icon: IconBuilding, label: "Barrio", value: cliente.barrio },
+    { icon: IconMap2, label: "Ciudad", value: cliente.ciudad },
+    {
+      icon: IconCash,
+      label: "Dirección de Cobro",
+      value:
+        cliente.direccionCobroValor ||
+        (cliente.direccionCobro === "direccionComercial"
+          ? cliente.direccionComercial
+          : cliente.direccion),
+    },
+    { icon: IconMap, label: "Zona", value: cliente.zona?.nombre || "Sin zona asignada" },
+    { icon: IconShoppingBag, label: "Tipo de Comercio", value: cliente.tipoDeComercio },
+  ]
+  return (
+    <div className="cliente-info-grid">
+      <div className="cliente-info-column">
+        {leftColumn.map((item, idx) => (
+          <InfoCard key={idx} {...item} />
+        ))}
+      </div>
+      <div className="cliente-info-column">
+        {rightColumn.map((item, idx) => (
+          <InfoCard key={idx} {...item} />
+        ))}
+      </div>
+    </div>
+  )
+}
+export default ClienteInfoReadOnly

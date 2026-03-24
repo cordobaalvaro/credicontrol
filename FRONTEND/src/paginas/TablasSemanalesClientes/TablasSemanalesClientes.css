@@ -1,0 +1,184 @@
+.tablas-semanales-container {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+.tablas-semanales-section {
+  margin-top: 1rem;
+}
+.empty-state-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  text-align: center;
+  background-color: #ffffff;
+}
+.tabla-semanal-card--base {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+.tabla-semanal-header {
+  gap: 1rem;
+}
+.tabla-semanal-title {
+  color: #111827;
+  font-size: 1.1rem;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+.tabla-semanal-cobrador-label {
+  color: #6b7280;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+.tabla-semanal-cobrador-name {
+  color: #374151;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+.tabla-semanal-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  border-radius: 20px;
+  border: none;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+.tabla-semanal-metrics {
+  row-gap: 1.25rem;
+}
+.tabla-semanal-metric-value {
+  line-height: 1.15;
+  font-size: 1.05rem;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+.tabla-semanal-metric-value--items {
+  color: #6b7280;
+}
+.tabla-semanal-metric-value--esperado {
+  color: #64748b;
+}
+.tabla-semanal-metric-value--deuda {
+  color: #dc2626;
+}
+.tabla-semanal-metric-value--cobrado {
+  color: #059669;
+}
+.tabla-semanal-metric-label {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+.tabla-semanal-footer {
+  border-top: 1px solid #f3f4f6;
+  gap: 0.75rem;
+}
+.tabla-semanal-link {
+  color: #059669;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+}
+.tabla-semanal-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 12px;
+}
+.tabla-semanal-btn--send {
+  border: 1px solid #bbf7d0;
+  background: #ffffff;
+  color: #059669;
+}
+.tabla-semanal-btn--delete {
+  border: 1px solid #fecaca;
+  background: #ffffff;
+  color: #ef4444;
+}
+.tabla-semanal-card .tabla-semanal-resumen {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.85rem;
+}
+.tabla-semanal-card .tabla-semanal-resumen .label {
+  display: block;
+  color: #6b7280;
+}
+.tabla-semanal-card .tabla-semanal-resumen .value {
+  font-weight: 600;
+  color: #111827;
+}
+.tabla-semanal-detalle {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 0.75rem;
+}
+.tabla-semanal-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.tabla-semanal-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #f9fafb;
+}
+.tabla-semanal-item-main {
+  flex: 1.5;
+}
+.tabla-semanal-item-main .nombre-cliente {
+  font-weight: 600;
+  color: #111827;
+}
+.tabla-semanal-item-main .detalle-cliente {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+.tabla-semanal-item-montos {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.8rem;
+}
+@media (max-width: 576px) {
+  .tabla-semanal-item-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .tabla-semanal-item-montos {
+    justify-content: flex-start;
+    gap: 1.25rem;
+  }
+}
+.tabla-semanal-item-montos .label {
+  display: block;
+  color: #6b7280;
+}
+.tabla-semanal-item-montos .value {
+  font-weight: 600;
+  color: #111827;
+}
+.tabla-semanal-item-icon {
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loading-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.filter-month-input {
+  max-width: 200px;
+}
+.filter-select-cobrador {
+  max-width: 300px;
+}

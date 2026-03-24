@@ -1,0 +1,28 @@
+body {
+  padding-top: 0;
+  margin: 0;
+}
+.app-wrapper {
+  padding-left: 240px;
+  min-height: 100vh;
+  background: var(--bg-sistema);
+  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.app-wrapper.no-padding-top {
+  padding-left: 0;
+  padding-bottom: 0;
+}
+@media (max-width: 767px) {
+  .app-wrapper {
+    padding-left: 0;
+    padding-bottom: 64px;
+  }
+  .app-wrapper.no-padding-top {
+    padding-bottom: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .app-wrapper {
+    transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}

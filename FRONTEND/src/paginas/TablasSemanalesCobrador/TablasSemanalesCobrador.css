@@ -1,0 +1,17 @@
+.empty-state-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+.empty-state-description {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #64748b;
+}
+.empty-state-icon {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}

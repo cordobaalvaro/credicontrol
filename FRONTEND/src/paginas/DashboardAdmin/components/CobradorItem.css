@@ -1,0 +1,224 @@
+.cobrador-item.list-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  background: white;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.cobrador-item.list-item:hover {
+  border-color: #10b981;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+  transform: translateY(-1px);
+}
+.cobrador-item .list-item-icon {
+  margin-right: 4px;
+}
+.cobrador-zona-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+}
+.cobrador-no-zona-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+}
+.cobrador-item .list-item-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 1rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+.cobrador-item .list-item-icon.primary {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+.cobrador-item .list-item-content {
+  flex: 1;
+  min-width: 0;
+}
+.cobrador-item .list-item-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+.cobrador-item .list-item-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cobrador-item .list-item-badge {
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+.cobrador-item .list-item-subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+}
+.cobrador-item .list-item-info {
+  display: flex;
+  gap: 1rem;
+  margin-right: 1rem;
+}
+.cobrador-item .list-item-info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 80px;
+}
+.cobrador-item .list-item-info-label {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.cobrador-item .list-item-info-value {
+  font-size: 0.875rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+.cobrador-item .list-item-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.cobrador-item .list-item-action-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #f8f9fa;
+  color: #6c757d;
+}
+.cobrador-item .list-item-action-btn:hover {
+  background: #e9ecef;
+  color: #495057;
+}
+.cobrador-item .list-item-action-btn.btn-editar:hover {
+  background: #10b981;
+  color: white;
+}
+.cobrador-item .list-item-action-btn.btn-eliminar:hover {
+  background: #dc3545;
+  color: white;
+}
+.cobrador-item .list-item-dropdown-toggle {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: #f8f9fa;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.cobrador-item .list-item-dropdown-toggle:hover {
+  background: #e9ecef;
+}
+@media (max-width: 768px) {
+  .cobrador-item.list-item {
+    padding: 0.75rem;
+  }
+  .cobrador-item .list-item-info {
+    display: none;
+  }
+  .cobrador-item .list-item-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.75rem;
+  }
+  .list-item-title {
+    font-size: 0.9rem;
+  }
+  .list-item-subtitle {
+    font-size: 0.8rem;
+  }
+}
+.cobradores-list {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+.cobradores-list::-webkit-scrollbar {
+  width: 6px;
+}
+.cobradores-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+.cobradores-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+.cobradores-list::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+.cobradores-list-container .btn-create-cobrador {
+  background: linear-gradient(180deg, #059669 0%, #10b981 100%);
+  border-color: #059669;
+  color: white;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
+}
+.cobradores-list-container .btn-create-cobrador:hover {
+  background: linear-gradient(180deg, #047857 0%, #059669 100%);
+  border-color: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(5, 150, 105, 0.3);
+}
+.cobradores-list-container .btn-create-cobrador:focus {
+  background: linear-gradient(180deg, #059669 0%, #10b981 100%);
+  border-color: #10b981;
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+.cobradores-list-container .btn-create-cobrador:active {
+  background: linear-gradient(180deg, #047857 0%, #059669 100%);
+  transform: translateY(0);
+}
+.cobradores-list-container .btn-create-cobrador:disabled {
+  background: linear-gradient(180deg, #6c757d, #868e96);
+  border-color: #6c757d;
+  opacity: 0.6;
+}
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+.empty-state .empty-icon {
+  color: #dee2e6;
+  margin-bottom: 1rem;
+}
+.empty-state h5 {
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+.empty-state p {
+  color: #adb5bd;
+  font-size: 0.9rem;
+}

@@ -1,0 +1,47 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea# os
+.DS_Store
+Thumbs.db
+
+# balance
+src/paginas/Balance/
+src/componentes/pdf/BalancePDFGenerator.jsx
+src/componentes/pdf/BalanceAnualPDFGenerator.jsx
+src/services/balance.service.js
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Electron
+dist-electron
+build
+*.exe
+*.dmg
+*.AppImage
+*.snap
+main.js
+main.cjs
+electron-builder.yml
+out

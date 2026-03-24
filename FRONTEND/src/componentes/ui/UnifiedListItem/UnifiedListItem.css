@@ -1,0 +1,238 @@
+.unified-list-item {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: var(--blanco);
+  border-bottom: 1px solid var(--gris-100);
+  transition: var(--transicion-rapida);
+  cursor: pointer;
+  position: relative;
+}
+.unified-list-item:hover:not(.no-hover-vencido) {
+  background: var(--gris-50);
+}
+.unified-list-item.no-hover-vencido {
+  cursor: default;
+}
+.unified-list-item.selected {
+  background: var(--verde-light-bg);
+  border-left: 3px solid var(--verde-principal);
+  padding-left: calc(1rem - 3px);
+}
+.unified-zona-badge {
+  font-size: 0.6rem;
+  padding: 0.2rem 0.4rem;
+}
+.unified-no-zona-badge {
+  font-size: 0.6rem;
+  padding: 0.2rem 0.4rem;
+}
+.item-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--action-bg, var(--gris-200));
+  background: var(--action-bg, transparent);
+  color: var(--action-color, var(--gris-500));
+  transition: all 0.2s;
+  padding: 0;
+}
+.item-action-btn:hover {
+  background: var(--action-bg, var(--gris-100));
+  color: var(--action-color, var(--verde-principal));
+  border-color: var(--action-bg, var(--verde-principal));
+  filter: brightness(0.95);
+}
+.item-action-btn.action-primary {
+  --action-color: var(--verde-principal);
+  --action-bg: rgba(40, 167, 69, 0.1);
+}
+.item-action-btn.action-danger {
+  --action-color: #dc3545;
+  --action-bg: rgba(220, 53, 69, 0.1);
+}
+.item-action-btn.action-warning {
+  --action-color: #ffc107;
+  --action-bg: rgba(255, 193, 7, 0.1);
+}
+.item-action-btn.action-info {
+  --action-color: #17a2b8;
+  --action-bg: rgba(23, 162, 184, 0.1);
+}
+.item-action-btn.action-secondary {
+  --action-color: #6c757d;
+  --action-bg: rgba(108, 117, 125, 0.1);
+}
+.item-action-btn.action-bg {
+  --action-bg: var(--action-bg, transparent);
+}
+.item-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 0.25rem;
+}
+.item-checkbox input {
+  cursor: pointer;
+}
+.item-main-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radio-sm);
+  background: var(--gris-100);
+  color: var(--gris-500);
+  flex-shrink: 0;
+}
+.item-main-icon.tipo-bueno { background-color: #dcfce7; color: #15803d; }
+.item-main-icon.tipo-regular { background-color: #fef3c7; color: #b45309; }
+.item-main-icon.tipo-malo { background-color: #fee2e2; color: #991b1b; }
+.item-main-icon.tipo-neutro { background-color: var(--gris-100); color: var(--gris-500); }
+.item-main-icon.prestamo-activo { background-color: #dcfce7; color: #15803d; }
+.item-main-icon.prestamo-vencido { background-color: #fef3c7; color: #b45309; }
+.item-main-icon.prestamo-cancelado { background-color: #fee2e2; color: #991b1b; }
+.item-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.item-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+.item-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--gris-900);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-subtitle {
+  font-size: 0.75rem;
+  color: var(--gris-500);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-info-grid {
+  display: flex;
+  gap: 2rem;
+  margin-left: auto;
+  margin-right: 1.5rem;
+  align-items: center;
+}
+.item-info-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 80px;
+}
+.item-info-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--gris-400);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.item-info-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gris-700);
+}
+.item-actions {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+.item-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--gris-200);
+  background: transparent;
+  color: var(--gris-500);
+  transition: all 0.2s;
+  padding: 0;
+}
+.item-action-btn:hover {
+  background: var(--gris-100);
+  color: var(--verde-principal);
+  border-color: var(--verde-principal);
+}
+.item-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+@media (max-width: 992px) {
+  .unified-list-item {
+    grid-template-columns: auto auto 1fr auto;
+    grid-template-areas: 
+      "checkbox icon title actions"
+      "checkbox info info info";
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+  }
+  .item-checkbox { grid-area: checkbox; }
+  .item-main-icon { grid-area: icon; }
+  .item-content { grid-area: title; }
+  .item-actions { grid-area: actions; }
+  .item-info-grid { 
+    grid-area: info; 
+    margin: 0.5rem 0 0 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--gris-100);
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .item-info-cell {
+    align-items: flex-start;
+    flex: 1;
+  }
+}
+.unified-dropdown-menu {
+  border: none !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 12px !important;
+  padding: 0.5rem !important;
+  min-width: 160px !important;
+}
+.unified-dropdown-menu .dropdown-item {
+  border-radius: 8px !important;
+  padding: 0.6rem 0.8rem !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  color: var(--gris-700) !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: all 0.2s !important;
+}
+.unified-dropdown-menu .dropdown-item:hover {
+  background-color: var(--gris-50) !important;
+  color: var(--verde-principal) !important;
+}
+.unified-dropdown-menu .dropdown-item.text-danger:hover {
+  background-color: #fff1f2 !important;
+  color: #e11d48 !important;
+}
+.unified-dropdown-menu .dropdown-item svg {
+  color: var(--gris-400);
+  transition: color 0.2s;
+}
+.unified-dropdown-menu .dropdown-item:hover svg {
+  color: inherit;
+}

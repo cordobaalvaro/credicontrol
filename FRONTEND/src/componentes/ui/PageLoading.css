@@ -1,0 +1,23 @@
+.page-loading-container {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+.page-loading-spinner-wrapper {
+    position: relative;
+}
+.page-loading-spinner {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3rem;
+}
+.page-loading-message {
+    color: #6b7280;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0;
+    letter-spacing: 0.01em;
+}

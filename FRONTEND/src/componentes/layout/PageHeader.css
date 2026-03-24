@@ -1,0 +1,73 @@
+.page-header {
+  background: #f8fafc;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  border-bottom: 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+.page-header-title {
+  color: #059669;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
+}
+.page-header-title i {
+  color: #059669;
+}
+.page-header-subtitle {
+  display: block;
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
+  opacity: 0.92;
+  color: #64748b;
+  position: relative;
+  z-index: 1;
+}
+.page-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.page-header-back-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 1.25rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+.page-header-back-btn:hover {
+  background: rgba(100, 116, 139, 0.1);
+  color: #059669;
+}
+.page-header-back-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
+}
+@media (max-width: 768px) {
+  .page-header {
+    padding: 0.875rem 0;
+    margin-bottom: 1.25rem;
+  }
+  .page-header-title {
+    font-size: 1.25rem;
+  }
+  .page-header-title i {
+    font-size: 1.125rem;
+  }
+}

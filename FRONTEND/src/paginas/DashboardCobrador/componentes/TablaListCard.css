@@ -1,0 +1,21 @@
+.tabla-list-iconbox {
+    --tabla-icon-bg: var(--icon-bg, #f3f4f6);
+    --tabla-icon-color: var(--icon-color, #6b7280);
+}
+.tabla-list-total-value {
+    --tabla-icon-color: var(--icon-color, #6b7280);
+}
+.tabla-list-item {
+    --item-bg: var(--item-bg-color, #f8f9fa);
+    --item-border: var(--item-border-color, #e9ecef);
+    --tabla-icon-color: var(--icon-color, #6b7280);
+}
+.tabla-list-item-meta {
+    margin-bottom: 2px;
+}
+.tabla-list-item-location {
+    margin-bottom: 4px;
+}
+.tabla-list-empty-icon__svg {
+    --tabla-icon-color: var(--icon-color, #6b7280);
+}

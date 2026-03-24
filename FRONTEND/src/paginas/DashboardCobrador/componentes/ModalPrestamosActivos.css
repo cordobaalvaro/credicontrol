@@ -1,0 +1,12 @@
+.badge-activo {
+    background: #dcfce7;
+    color: #059669;
+    font-size: 0.75rem;
+}
+.modal-activos-empty-icon {
+    opacity: 0.3;
+    margin-bottom: 16px;
+}
+.modal-activos-close-icon {
+    margin-right: 6px;
+}

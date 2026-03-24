@@ -1,0 +1,131 @@
+.tabla-semanal-list-item {
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 0.75rem;
+    border: 1px solid #f3f4f6;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.tabla-semanal-list-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+.list-item-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.list-item-info-item-fixed {
+    min-width: 140px;
+}
+.list-item-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.list-item-icon.success {
+    background-color: #ecfdf5;
+    color: #10b981;
+}
+.list-item-header-content {
+    flex: 1;
+}
+.list-item-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+.list-item-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #111827;
+}
+.list-item-estado-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.list-item-subtitle-row {
+    margin-bottom: 0.5rem;
+}
+.list-item-subtitle {
+    font-size: 0.85rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+}
+.list-item-subtitle i, 
+.list-item-subtitle svg {
+    margin-right: 4px;
+}
+.list-item-address {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    margin-top: 0.25rem;
+}
+.list-item-address svg {
+    margin-right: 4px;
+}
+.list-item-metrics-inline {
+    display: none; 
+}
+.list-item-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f3f4f6;
+}
+.list-item-info-item {
+    display: flex;
+    flex-direction: column;
+}
+.list-item-info-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+.list-item-info-label svg {
+    margin-right: 4px;
+}
+.list-item-info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #111827;
+}
+.info-vencido .list-item-info-value {
+    color: #ef4444;
+}
+.info-deuda-ant .list-item-info-label,
+.info-deuda-ant .list-item-info-value {
+    color: #f59e0b;
+}
+.list-item-esperado-edicion {
+    width: 100%;
+}
+.select-cuota-esperado {
+    min-width: 120px;
+    z-index: 10;
+    position: relative;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+}
+.list-item-esperado-fecha {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    display: block;
+}
+@media (max-width: 768px) {
+    .list-item-info {
+        grid-template-columns: 1fr 1fr;
+    }
+}

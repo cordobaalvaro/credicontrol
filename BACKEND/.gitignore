@@ -1,0 +1,12 @@
+.env
+node_modules
+
+# balance
+src/controllers/balance.controllers.js
+src/controllers/balanceAnual.controllers.js
+src/models/balance.model.js
+src/models/balanceAnual.model.js
+src/routes/balance.routes.js
+src/routes/balanceAnual.routes.js
+src/services/balance.services.js
+src/services/balanceAnual.services.js
