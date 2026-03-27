@@ -6,15 +6,12 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb)](https://www.mongodb.com/)
 [![Express](https://img.shields.io/badge/Express-4-000000?logo=express)](https://expressjs.com/)
-[![Electron](https://img.shields.io/badge/Electron-Desktop-47848F?logo=electron)](https://www.electronjs.org/)
 
 ---
 
 ## ¿Qué es CrediControl?
 
-**CrediControl** es una aplicación desktop/web de gestión de créditos y cobranzas, diseñada para pequeñas financieras y prestamistas. Permite administrar clientes, préstamos, cobradores, zonas geográficas, tablas de cobro semanales y generar reportes en PDF — todo desde una interfaz moderna y responsiva.
-
-La aplicación funciona como **app de escritorio (Electron)** con comunicación a un backend REST en Node.js y una base de datos en MongoDB Atlas.
+**CrediControl** es una aplicación web de gestión de créditos y cobranzas, diseñada para pequeñas financieras y prestamistas. Permite administrar clientes, préstamos, cobradores, zonas geográficas, tablas de cobro semanales y generar reportes en PDF — todo desde una interfaz moderna y responsiva.
 
 ---
 
@@ -22,13 +19,13 @@ La aplicación funciona como **app de escritorio (Electron)** con comunicación 
 
 ```
 credicontrol/
-├── FRONTEND/          # React 19 + Vite + Electron (app de escritorio)
-└── BACKEND/           # Node.js + Express + MongoDB (API REST)
+├── frontend/          # React 19 + Vite (SPA)
+└── backend/           # Node.js + Express + MongoDB (API REST)
 ```
 
 El proyecto sigue una separación estricta de responsabilidades:
-- El **FRONTEND** gestiona la experiencia de usuario y no contiene lógica de negocio crítica.
-- El **BACKEND** es la autoridad de todas las reglas de negocio, validaciones y seguridad.
+- El **frontend** gestiona la experiencia de usuario y no contiene lógica de negocio crítica.
+- El **backend** es la autoridad de todas las reglas de negocio, validaciones y seguridad.
 
 ---
 
@@ -37,14 +34,13 @@ El proyecto sigue una separación estricta de responsabilidades:
 | Módulo | Descripción |
 |--------|-------------|
 | 🔐 **Autenticación** | JWT con Access Token + Refresh Token (cookie HttpOnly), roles Admin y Cobrador |
-| 👥 **Clientes** | CRUD completo con validaciones (DNI, teléfono, dirección), tipos de cliente, documentos |
+| 👥 **Clientes** | CRUD completo con validaciones (DNI, teléfono, dirección), scoring automático de clientes |
 | 💰 **Préstamos** | Creación con planes configurables (semanal/quincenal/mensual), seguimiento de cuotas, estados (activo/cancelado/vencido/refinanciado) |
 | 🗺️ **Zonas** | Gestión geográfica, asignación de cobradores, métricas por zona |
 | 📋 **Tablas de cobro** | Organización semanal de cobros por cobrador, registro de pagos, exportación PDF |
 | 📊 **Reportes** | Generación de PDF (comprobantes, resúmenes, tablas de amortización, registros de cobros) |
 | 🔔 **Notificaciones** | Alertas automáticas para préstamos por vencer, cron de actualización nocturno |
 | 📈 **Dashboard** | Métricas consolidadas para Admin, métricas de zona para Cobrador |
-| 🧾 **Balance** | Registro de gastos del negocio y cálculo de ganancias |
 
 ---
 
@@ -52,7 +48,6 @@ El proyecto sigue una separación estricta de responsabilidades:
 
 ### Frontend
 - **React 19** + **Vite** — Build rápido con HMR
-- **Electron** — Empaquetado como aplicación desktop
 - **React Bootstrap 5** — UI components estilizados
 - **React Router DOM 7** — Navegación SPA
 - **Axios** — HTTP client con interceptores JWT automáticos
@@ -66,6 +61,18 @@ El proyecto sigue una separación estricta de responsabilidades:
 - **node-cron** — Actualización automática de estados de préstamos a medianoche
 - **Cloudinary** — Almacenamiento de documentos de clientes
 - **Render** — Plataforma de despliegue del backend
+
+---
+
+## 📸 Capturas de Pantalla
+
+| Login | Dashboard Administrativo |
+|-------|--------------------------|
+| ![Login](./screenshots/login.png) | ![Dashboard](./screenshots/dashboard-admin.png) |
+
+| Gestión de Clientes | Detalle de Cliente |
+|---------------------|--------------------|
+| ![Clientes](./screenshots/clientes.png) | ![Detalle](./screenshots/detalle-cliente.png) |
 
 ---
 
@@ -86,34 +93,36 @@ cd credicontrol
 ### 2. Configurar y levantar el Backend
 
 ```bash
-cd BACKEND
+cd backend
 npm install
-# Crear .env con las variables necesarias (ver BACKEND/README.md)
+cp .env.example .env   # Completar las variables
 npm run dev
 ```
 
 ### 3. Configurar y levantar el Frontend
 
 ```bash
-cd FRONTEND
+cd frontend
 npm install
-# Crear .env con VITE_API_BASE_URL=http://localhost:5000/api
-npm run dev         # Web en localhost:5173
-npm run electron-dev  # App de escritorio
+cp .env.example .env   # Completar VITE_API_BASE_URL
+npm run dev            # Web en localhost:5173
 ```
+
+---
+
+## 🌐 Despliegue en Producción
+
+El sistema está configurado y optimizado para entornos de nube:
+
+- **Frontend (Vercel):** Configuración lista para despliegue continuo (CI/CD) con manejo de rutas SPA (`vercel.json`).
+- **Backend (Render):** Soporte nativo para Node.js, variables de entorno seguras y persistencia MongoDB Atlas.
 
 ---
 
 ## 📁 Documentación Detallada
 
-- 📖 **[FRONTEND/README.md](./FRONTEND/README.md)** — Instalación, estructura, rutas, deploy en Vercel
-- 📖 **[BACKEND/README.md](./BACKEND/README.md)** — Endpoints, variables de entorno, estructura MVC, deploy en Render
-
----
-
-## 📸 Capturas de Pantalla
-
-> *Próximamente — el sistema está en producción activa.*
+- 📖 **[frontend/README.md](./frontend/README.md)** — Instalación, estructura, rutas, deploy en Vercel
+- 📖 **[backend/README.md](./backend/README.md)** — Endpoints, variables de entorno, estructura MVC, deploy en Render
 
 ---
 
@@ -121,7 +130,7 @@ npm run electron-dev  # App de escritorio
 
 **Álvaro Córdoba**
 - GitHub: [@cordobaalvaro](https://github.com/cordobaalvaro)
-- LinkedIn: [linkedin.com/in/cordobaalvaro](https://www.linkedin.com/in/cordobaalvaro/)
+- LinkedIn: [linkedin.com/in/cordobaalvaro](https://www.linkedin.com/in/alvaro-maximiliano-cordoba-90335236b/)
 
 ---
 
