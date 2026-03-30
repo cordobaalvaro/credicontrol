@@ -3,13 +3,6 @@ const PrestamoModel = require("../models/prestamo.model");
 const ZonaModel = require("../models/zona.model");
 const DocumentoCliente = require("../models/documentosCliente.model");
 
-/**
- * Crea un nuevo cliente y lo registra automáticamente en su zona.
- * Maneja el error de DNI duplicado (código 11000 de MongoDB).
- *
- * @param {{ nombre: string, dni: string, telefono: string, zona: string, direccion?: string, direccionComercial?: string }} datos
- * @returns {Promise<{status: number, msg: string, data: object|null}>}
- */
 const crearClienteBD = async (datos) => {
   try {
     const nuevoCliente = new ClienteModel(datos);
@@ -78,14 +71,6 @@ const obtenerClientesPorTipoBD = async (tipo) => {
   }
 };
 
-/**
- * Genera un array de mensajes en lenguaje natural explicando por qué un cliente
- * tiene el tipo (scoring) que tiene actualmente.
- * Usa la misma lógica que `repasarTiposDeClientes` pero produce texto legible para el admin.
- *
- * @param {string} clienteId - ID de MongoDB del cliente.
- * @returns {Promise<{status: number, msg: string, data: {cliente: object, tipo: string, razones: string[]}|null}>}
- */
 const obtenerRazonTipoClienteBD = async (clienteId) => {
   try {
     const cliente = await ClienteModel.findById(clienteId, {
@@ -289,19 +274,6 @@ const obtenerRazonTipoClienteBD = async (clienteId) => {
   }
 };
 
-/**
- * Job que recalcula y actualiza el tipo (scoring) de todos los clientes activos.
- * Es llamado por el cron nocturno junto con `actualizarPrestamos`.
- *
- * Reglas de clasificación:
- * - 'malo':    tiene préstamos vencidos con 4 o más semanas acumuladas de mora actual.
- * - 'regular': tiene préstamos vencidos con menos de 4 semanas, o tuvo mora reciente (< 90 días).
- * - 'bueno':   sin mora actual, historial de mora resuelto hace más de 90 días (3 meses),
- *              Y al menos un préstamo con el 50% o más del monto pagado.
- * - 'neutro':  sin préstamos, o 'bueno' calculado pero sin cumplir el requisito del 50% pagado.
- *
- * @returns {Promise<{status: number, msg: string, data: {procesados: number, actualizados: number}|null}>}
- */
 const repasarTiposDeClientes = async () => {
   try {
     const clientes = await ClienteModel.find(
@@ -318,8 +290,7 @@ const repasarTiposDeClientes = async () => {
     }
 
     const ahora = new Date();
-    // Regla de recuperación: un cliente con historial de mora necesita
-    // 90 días (3 meses) sin nuevos vencidos para poder ascender a 'bueno'.
+
     const tresMesesMs = 90 * 24 * 60 * 60 * 1000;
 
     let actualizados = 0;
@@ -489,14 +460,6 @@ const marcarClienteActivoBD = async (id) => {
   }
 };
 
-/**
- * Obtiene la lista de clientes con filtros opcionales aplicados en memoria.
- * Los filtros `conZona`/`sinZona` no se pueden expresar directamente en la query de Mongo
- * porque dependen del populate, por eso se filtran después de la consulta.
- *
- * @param {{ zona?: string|'conZona'|'sinZona', estado?: 'activo'|'inactivo', q?: string }} [filtros={}]
- * @returns {Promise<{status: number, msg: string, data: object[]|null}>}
- */
 const obtenerClientesBD = async (filtros = {}) => {
   try {
     let query = {};

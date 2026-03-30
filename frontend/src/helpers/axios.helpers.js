@@ -29,9 +29,21 @@ export const configHeadersImage = {
   },
 };
 api.interceptors.request.use((config) => {
-  if (accessToken) {
+  let token = accessToken;
+  if (!token) {
+    try {
+      const sessionToken = sessionStorage.getItem("token");
+      if (sessionToken && sessionToken !== "undefined") {
+        token = JSON.parse(sessionToken);
+      }
+    } catch (e) {
+      token = null;
+    }
+  }
+
+  if (token) {
     config.headers = config.headers || {};
-    config.headers.Authorization = `Bearer ${accessToken}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
@@ -39,6 +51,7 @@ api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const originalRequest = error.config;
+    
     const status = error.response?.status;
     if (status !== 401 || originalRequest?._retry) {
       return Promise.reject(error);
