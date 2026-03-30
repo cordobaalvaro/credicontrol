@@ -16,8 +16,6 @@ const planesRoutes = require("./planes.routes");
 const notificacionesRoutes = require("./notificaciones.routes");
 const authRoutes = require("./auth.routes");
 const tablaSemanalRoutes = require("./tablaSemanal.routes");
-// const balanceRoutes = require("./balance.routes")
-// const balanceAnualRoutes = require("./balanceAnual.routes")
 const dashboardAdminRoutes = require("./dashboardAdmin.routes")
 const dashboardCobradorRoutes = require("./dashboardCobrador.routes")
 const gastosRoutes = require("./gasto.routes");
@@ -39,8 +37,6 @@ router.use("/zonas", zonaRoutes);
 router.use("/cobradores", cobradoresRoutes);
 router.use("/admin", adminRoutes);
 router.use("/tablas-semanal", tablaSemanalRoutes);
-// router.use("/balance", balanceRoutes)
-// router.use("/balance-anual", balanceAnualRoutes)
 router.use("/dashboard", dashboardAdminRoutes)
 router.use("/dashboard-cobrador", dashboardCobradorRoutes)
 router.use("/gastos", gastosRoutes);

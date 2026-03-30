@@ -197,7 +197,6 @@ const cargarItemTablaSemanalAdmin = async (adminId, tablaId, itemId) => {
     if (!prestamoId) return { status: 400, msg: "El item no tiene préstamo asociado", data: null }
     if (Number.isNaN(monto) || monto <= 0) return { status: 400, msg: "El monto cobrado debe ser un número mayor a 0", data: null }
 
-    // Usar la fecha local actual en formato YYYY-MM-DD para evitar el desfase de UTC a la noche
     const hoy = new Date();
     const year = hoy.getFullYear();
     const month = String(hoy.getMonth() + 1).padStart(2, '0');

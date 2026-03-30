@@ -1,10 +1,6 @@
 const ClienteModel = require("../models/cliente.model");
 const PrestamoModel = require("../models/prestamo.model");
 
-/**
- * Obtiene el resumen detallado de un cliente para el reporte PDF.
- * @param {string} clienteId 
- */
 const resumenClientePDFBD = async (clienteId) => {
   try {
     const cliente = await ClienteModel.findById(clienteId)
@@ -105,10 +101,6 @@ const resumenClientePDFBD = async (clienteId) => {
   }
 };
 
-/**
- * Obtiene el reporte de cobros de un préstamo para el PDF.
- * @param {string} prestamoId 
- */
 const obtenerReporteCobrosPrestamosPDFBD = async (prestamoId) => {
   try {
     const prestamo = await PrestamoModel.findById(prestamoId).populate(
@@ -134,7 +126,6 @@ const obtenerReporteCobrosPrestamosPDFBD = async (prestamoId) => {
       montoInicial: prestamo.montoInicial || 0,
       monto: prestamo.montoTotal || 0,
       montoTotal: prestamo.montoTotal || 0,
-      // Se mantiene la lógica corregida para evitar montoCuota nulo
       montoCuota: prestamo.montoCuota || (prestamo.planDeCuotas && prestamo.planDeCuotas.length > 0 ? prestamo.planDeCuotas[0].monto : null),
       saldoPendiente: prestamo.saldoPendiente || 0,
       cantidadCuotas: prestamo.cantidadCuotas || 0,

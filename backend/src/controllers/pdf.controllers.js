@@ -78,9 +78,6 @@ exports.obtenerDatosPlanesPDF = async (req, res) => {
   try {
     const { tabla } = req.query;
     const resultado = await planesService.listarPlanes({ tabla });
-    // planesService.listarPlanes devuelve el resultado directamente o un objeto con status?
-    // Revisando planes.controllers.js, parece que devuelve el resultado directamente.
-    // Ajustaremos para ser consistentes con el formato de respuesta del backend.
     return res.json({
       status: 200,
       msg: "Planes obtenidos correctamente para PDF",
