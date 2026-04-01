@@ -136,7 +136,7 @@ El sistema está configurado y optimizado para entornos de nube:
 
 ## 📄 Licencia
 
-Este proyecto está bajo licencia **MIT**. Ver [LICENSE](./LICENSE) para más detalles.
+Este proyecto es de uso **Proprietario / Personal**. Queda prohibida su venta, redistribución o uso comercial sin el consentimiento expreso del autor ([Álvaro Córdoba](https://www.linkedin.com/in/alvaro-maximiliano-cordoba-90335236b/)). Ver [LICENSE](./LICENSE) para más detalles.
 
 ---
 
