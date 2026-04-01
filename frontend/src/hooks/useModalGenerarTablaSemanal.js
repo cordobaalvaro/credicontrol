@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
 import { usuarioService, tablaSemanalService } from "../services";
 import Swal from "sweetalert2"
+import { validarGeneracionTablaSemanal } from "../validators/tablaSemanal.validators";
+
 export const isMonday = (yyyyMmDd) => {
     if (!yyyyMmDd) return false
     const d = new Date(`${yyyyMmDd}T00:00:00`)
@@ -69,19 +71,18 @@ const useModalGenerarTablaSemanal = ({ show, onHide, onTablaCreada }) => {
     }
     const handleSubmit = async (e) => {
         e?.preventDefault?.()
-        if (!cobradorId || !fechaInicio || !fechaFin) {
-            setError("Debes seleccionar un cobrador y un rango de fechas")
-            return
+        
+        const errorValidacion = validarGeneracionTablaSemanal(
+            cobradorId, 
+            fechaInicio, 
+            fechaFin
+        );
+        
+        if (errorValidacion) {
+            setError(errorValidacion);
+            return;
         }
-        if (!isMonday(fechaInicio)) {
-            setError("La fecha de inicio debe ser un lunes")
-            return
-        }
-        const finEsperado = addDaysYmd(fechaInicio, 6)
-        if (fechaFin !== finEsperado) {
-            setError("El período debe ser semanal (lunes a domingo).")
-            return
-        }
+
         try {
             setSaving(true)
             setError("")

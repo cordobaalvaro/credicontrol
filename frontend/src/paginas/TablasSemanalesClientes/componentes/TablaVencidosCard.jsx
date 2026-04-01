@@ -2,11 +2,16 @@
 import { useState } from "react"
 import { Card, Badge, Button, Spinner } from "react-bootstrap"
 import { IconChevronRight, IconAlertTriangle, IconClock, IconRefresh } from "@tabler/icons-react"
-import dayjs from "dayjs"
+
 import TablaVencidosItemsList from "./TablaVencidosItemsList"
 import { formatARS } from "../../../helpers/currency"
 import "./TablaVencidosCard.css"
-const formatearFecha = (fecha) => (fecha ? dayjs(fecha).format("DD/MM/YYYY HH:mm") : "-")
+const formatearFecha = (fecha) => {
+  if (!fecha) return "-";
+  const d = new Date(fecha);
+  if (isNaN(d.getTime())) return "-";
+  return `${d.toLocaleDateString("es-AR")} ${d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
+}
 const TablaVencidosCard = ({ 
   tabla, 
   onTablaActualizada, 

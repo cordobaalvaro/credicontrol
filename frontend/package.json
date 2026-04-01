@@ -22,7 +22,6 @@
     "axios": "^1.11.0",
     "bootstrap": "^5.3.7",
     "bootstrap-icons": "^1.13.1",
-    "dayjs": "^1.11.18",
     "file-saver": "^2.0.5",
     "handsontable": "^16.1.1",
     "jspdf": "^4.2.0",

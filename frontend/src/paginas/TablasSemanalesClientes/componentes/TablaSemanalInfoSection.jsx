@@ -1,9 +1,13 @@
 import { IconCalendarWeek, IconUser, IconList, IconCash, IconCashBanknote, IconAlertTriangle } from "@tabler/icons-react"
-import dayjs from "dayjs"
+
 import { formatARS } from "../../../helpers/currency"
 const TablaSemanalInfoSection = ({ tabla }) => {
   if (!tabla) return null
-  const formatDate = (fecha) => (fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-")
+  const formatDate = (fecha) => {
+      if (!fecha) return "-";
+      const d = new Date(fecha);
+      return !isNaN(d.getTime()) ? d.toLocaleDateString("es-AR") : "-";
+  }
   const formatMonto = (valor) => formatARS(valor)
   const totalItems = Array.isArray(tabla.items) ? tabla.items.length : 0
   const cobradorNombre = tabla.cobrador?.nombre || tabla.cobrador?.email || "Sin datos"

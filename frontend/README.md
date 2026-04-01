@@ -16,9 +16,7 @@
 | SweetAlert2 | 11 | Alertas y confirmaciones |
 | jsPDF + jsPDF-AutoTable | 3.x | Generación de PDFs en cliente |
 | @react-pdf/renderer | 4 | PDFs con JSX |
-| Handsontable | 16 | Tablas editables (Excel-like) |
-| XLSX + FileSaver | — | Exportación a Excel |
-| Day.js | 1.11 | Formateo de fechas |
+| Handsontable | 16 | Tablas editables |
 
 ---
 
@@ -85,7 +83,7 @@ src/
 - Dashboard con métricas globales y por zona
 - CRUD de clientes, préstamos, cobradores y zonas
 - Gestión de tablas de cobro y planes de pago
-- Reportes PDF y exportación Excel
+- Reportes PDF profesionales
 - Sistema de notificaciones automáticas
 
 ### Cobrador
@@ -110,8 +108,7 @@ src/
 | Ruta | Acceso | Descripción |
 |------|--------|-------------|
 | `/` | Público | Login |
-| `/dashboard` | Admin | Dashboard administrativo |
-| `/cobrador` | Cobrador | Dashboard cobrador |
+| `/dashboard` | Ambos | Dashboard (varía según rol administrativo o cobrador) |
 | `/todos-los-clientes` | Admin | Listado completo de clientes |
 | `/todos-los-prestamos` | Admin | Listado completo de préstamos |
 | `/tablas` | Admin | Tablas de cobro globales |

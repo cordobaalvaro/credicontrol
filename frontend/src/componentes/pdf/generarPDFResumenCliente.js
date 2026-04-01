@@ -44,7 +44,7 @@ export const generarPDFResumenCliente = (datos) => {
   doc.setFontSize(11);
   doc.setFont("helvetica", "normal");
   const infoCliente = [
-    ["Cliente NÂ°:", cliente.numero || "N/A"],
+    ["Cliente Nº:", cliente.numero || "N/A"],
     ["Nombre Completo:", cliente.nombre || "N/A"],
     ["DNI:", cliente.dni || "N/A"],
     ["Teléfono:", cliente.telefono || "N/A"],
@@ -116,7 +116,7 @@ export const generarPDFResumenCliente = (datos) => {
       startY: yPosition + 8,
       head: [
         [
-          "NÂ° Préstamo",
+          "Nº Préstamo",
           "Nombre",
           "Tipo",
           "Monto Inicial",
@@ -188,20 +188,20 @@ export const generarPDFResumenCliente = (datos) => {
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     const estadisticas_adicionales = [
-      `â€¢ Total de préstamos registrados: ${estadisticas?.totalPrestamos || 0}`,
-      `â€¢ Préstamos activos: ${estadisticas?.prestamosActivos || 0} | Completados: ${estadisticas?.prestamosCompletados || 0}`,
-      `â€¢ Préstamos vencidos: ${estadisticas?.prestamosVencidos || 0} | Cancelados: ${estadisticas?.prestamosCancelados || 0}`,
-      `â€¢ Porcentaje de saldo pendiente: ${
+      `• Total de préstamos registrados: ${estadisticas?.totalPrestamos || 0}`,
+      `• Préstamos activos: ${estadisticas?.prestamosActivos || 0} | Completados: ${estadisticas?.prestamosCompletados || 0}`,
+      `• Préstamos vencidos: ${estadisticas?.prestamosVencidos || 0} | Cancelados: ${estadisticas?.prestamosCancelados || 0}`,
+      `• Porcentaje de saldo pendiente: ${
         estadisticas?.totalMontoTotal > 0
           ? ((estadisticas.totalSaldoPendiente / estadisticas.totalMontoTotal) * 100).toFixed(2)
           : 0
       }%`,
-      `â€¢ Promedio por préstamo: $${
+      `• Promedio por préstamo: $${
         estadisticas?.totalPrestamos > 0
           ? (estadisticas.totalMontoTotal / estadisticas.totalPrestamos).toLocaleString()
           : 0
       }`,
-      `â€¢ Zona asignada: ${cliente.zona?.nombre || "No asignada"}`,
+      `• Zona asignada: ${cliente.zona?.nombre || "No asignada"}`,
     ];
     let statsY = finalY + 33;
     estadisticas_adicionales.forEach((stat) => {

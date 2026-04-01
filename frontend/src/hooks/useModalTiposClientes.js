@@ -116,7 +116,7 @@ const useModalTiposClientes = (show, onAfterRecalcular) => {
                             .map(
                                 (razón) => `
                 <div class="razon-item">
-                  <span class="razon-bullet">â€¢</span>
+                  <span class="razon-bullet">•</span>
                   <span class="razon-text">${razón}</span>
                 </div>
               `,
