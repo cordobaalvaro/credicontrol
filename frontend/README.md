@@ -132,4 +132,4 @@ El proyecto incluye `vercel.json` configurado para SPA:
 
 ## 📄 Licencia
 
-MIT — CrediControl © 2025
+Propiedad Intelectual de **Álvaro Córdoba** — Queda prohibida la venta o uso comercial sin autorización. Ver [LICENSE](../LICENSE) para más detalles.

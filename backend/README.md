@@ -136,4 +136,4 @@ El archivo `src/utils/prestamos.cron.js` actualiza automáticamente el estado de
 
 ## 📄 Licencia
 
-MIT — CrediControl © 2025
+Propiedad Intelectual de **Álvaro Córdoba** — Queda prohibida la venta o uso comercial sin autorización. Ver [LICENSE](../LICENSE) para más detalles.
