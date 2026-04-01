@@ -1,8 +1,13 @@
 import { Modal, Spinner, Table } from "react-bootstrap";
 import { IconTrendingUp, IconCalendarEvent } from "@tabler/icons-react";
 import { formatARS } from "../../../helpers/currency";
-import dayjs from "dayjs";
+
 import "../DashboardAdmin.css"
+const formatDate = (fecha) => {
+  if (!fecha) return "-";
+  const d = new Date(fecha);
+  return !isNaN(d.getTime()) ? d.toLocaleDateString("es-AR") : "-";
+}
 const CobradosMesModal = ({ show, onHide, loading, cobradosMesData }) => {
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="dashboard-zonas-modal">
@@ -54,7 +59,7 @@ const CobradosMesModal = ({ show, onHide, loading, cobradosMesData }) => {
                       <td className="pe-4 text-muted small">
                         <div className="d-flex align-items-center gap-1">
                           <IconCalendarEvent size={14} />
-                          {dayjs(cobro.fechaCobro).format("DD/MM/YYYY")}
+                          {formatDate(cobro.fechaCobro)}
                         </div>
                       </td>
                     </tr>

@@ -60,7 +60,7 @@ const TablaListCard = ({
                                                 {item.cliente?.nombre || "Cliente"}
                                             </div>
                                             <div className="small text-muted tabla-list-item-meta">
-                                                Préstamo {item.prestamo?.numero || "N/A"} â€¢ {item.zona?.nombre || "N/A"}
+                                                Préstamo {item.prestamo?.numero || "N/A"} • {item.zona?.nombre || "N/A"}
                                             </div>
                                             <div className="small text-muted tabla-list-item-location">
                                                 <IconMapPin size={12} className="tabla-list-map-pin" />

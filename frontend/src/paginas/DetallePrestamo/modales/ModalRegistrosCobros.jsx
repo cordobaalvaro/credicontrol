@@ -111,7 +111,7 @@ const ModalRegistrosCobros = ({
                   </div>
                   {registro.registroCompleto?.createdAt && (
                     <div className="registro-id-timestamp d-none d-md-block">
-                      ID: #{index + 1} â€¢ {new Date(registro.registroCompleto.createdAt).toLocaleString("es-AR")}
+                      ID: #{index + 1} • {new Date(registro.registroCompleto.createdAt).toLocaleString("es-AR")}
                     </div>
                   )}
                 </div>

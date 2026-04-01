@@ -10,7 +10,7 @@ import {
     IconCheck,
     IconAlertTriangle,
 } from "@tabler/icons-react"
-import dayjs from "dayjs"
+
 import { formatARS } from "../../../helpers/currency"
 import "./TablaSemanalListItem.css"
 const TablaSemanalListItem = ({
@@ -39,7 +39,11 @@ const TablaSemanalListItem = ({
     montosEsperados = {},
     onMontoEsperadoChange = null,
 }) => {
-    const formatDate = (fecha) => (fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-")
+    const formatDate = (fecha) => {
+        if (!fecha) return "-";
+        const d = new Date(fecha);
+        return !isNaN(d.getTime()) ? d.toLocaleDateString("es-AR") : "-";
+    }
     const formatMonto = (valor) => formatARS(valor)
     const getZonaName = () => item?.zona?.nombre || "Sin Zona"
     const getClienteName = () => item?.cliente?.nombre || "Cliente sin nombre"
@@ -101,7 +105,7 @@ const TablaSemanalListItem = ({
                     <div className="list-item-subtitle-row">
                         <span className="list-item-subtitle d-block">
                             <IconMapPin size={14} />
-                            {getZonaName()} â€¢ {getPrestamoText()}
+                            {getZonaName()} • {getPrestamoText()}
                         </span>
                         <span className="list-item-address">
                             <IconMapPin size={12} />

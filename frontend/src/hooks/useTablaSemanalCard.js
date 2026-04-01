@@ -1,8 +1,11 @@
 import { useState } from "react"
 import { tablaSemanalService } from "../services";
 import Swal from "sweetalert2"
-import dayjs from "dayjs"
-export const formatearFecha = (fecha) => (fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-")
+export const formatearFecha = (fecha) => {
+    if (!fecha) return "-";
+    const d = new Date(fecha);
+    return !isNaN(d.getTime()) ? d.toLocaleDateString("es-AR") : "-";
+}
 const useTablaSemanalCard = ({ tabla, onTablaActualizada, onTablaEliminada }) => {
     const [sending, setSending] = useState(false)
     const [deleting, setDeleting] = useState(false)
