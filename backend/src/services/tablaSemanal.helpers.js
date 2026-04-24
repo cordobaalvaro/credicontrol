@@ -11,23 +11,54 @@ const populateTabla = (query) => {
 }
 
 
-const recalcularTotales = (tabla) => {
-  tabla.montoTotalEsperado = tabla.items.reduce(
-    (sum, item) => sum + (item.montoCuotasEsperadoSemana || 0),
-    0,
-  )
-  tabla.montoTotalDeudaArrastrada = tabla.items.reduce(
-    (sum, item) => sum + (item.deudaArrastrada || 0),
-    0,
-  )
-  tabla.montoTotalCobrado = tabla.items.reduce(
-    (sum, item) => sum + (item.montoCobrado || 0),
-    0,
-  )
+const recalcularTotales = async (tabla) => {
+  // Para recalcular por estado, necesitamos que los préstamos estén populados o tener acceso a sus estados
+  // Si no están populados, intentamos popularlos brevemente
+  let itemsToProcess = tabla.items;
+  
+  const hasPopulatedPrestamos = itemsToProcess.length > 0 && 
+                                itemsToProcess[0].prestamo && 
+                                typeof itemsToProcess[0].prestamo === 'object' &&
+                                itemsToProcess[0].prestamo.estado;
+
+  if (!hasPopulatedPrestamos && itemsToProcess.length > 0) {
+    const populated = await TablaSemanalClientesModel.findById(tabla._id).populate("items.prestamo", "estado");
+    if (populated) itemsToProcess = populated.items;
+  }
+
+  let totalEsperado = 0;
+  let totalActivos = 0;
+  let totalVencidos = 0;
+  let totalDeudaArrastrada = 0;
+  let totalCobrado = 0;
+
+  itemsToProcess.forEach(item => {
+    const monto = item.montoCuotasEsperadoSemana || 0;
+    const deuda = item.deudaArrastrada || 0;
+    const cobrado = item.montoCobrado || 0;
+    
+    totalEsperado += monto;
+    totalDeudaArrastrada += deuda;
+    totalCobrado += cobrado;
+
+    // Categorizar por estado del préstamo
+    const estadoPrestamo = item.prestamo?.estado;
+    if (estadoPrestamo === "vencido") {
+      totalVencidos += monto;
+    } else {
+      totalActivos += monto;
+    }
+  });
+
+  tabla.montoTotalEsperado = totalEsperado;
+  tabla.montoTotalEsperadoActivos = totalActivos;
+  tabla.montoTotalEsperadoVencidos = totalVencidos;
+  tabla.montoTotalDeudaArrastrada = totalDeudaArrastrada;
+  tabla.montoTotalCobrado = totalCobrado;
 }
 
 
-const procesarActualizacionMontos = (tabla, itemsMontos, skipCargados = true) => {
+const procesarActualizacionMontos = async (tabla, itemsMontos, skipCargados = true) => {
   const montosPorItem = new Map()
   for (const item of itemsMontos || []) {
     if (!item.itemId && !item.prestamoId) continue
@@ -57,7 +88,7 @@ const procesarActualizacionMontos = (tabla, itemsMontos, skipCargados = true) =>
     return it
   })
 
-  recalcularTotales(tabla)
+  await recalcularTotales(tabla)
 }
 
 module.exports = {

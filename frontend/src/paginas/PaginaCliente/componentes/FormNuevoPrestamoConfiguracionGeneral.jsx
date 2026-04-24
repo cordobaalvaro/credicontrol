@@ -66,7 +66,6 @@ const FormNuevoPrestamoConfiguracionGeneral = ({
                             onChange={onChange}
                             required
                             isInvalid={!!errores.fechaInicio}
-                            min={new Date().toISOString().split("T")[0]}
                         />
                         {errores.fechaInicio && (
                             <Form.Control.Feedback type="invalid">

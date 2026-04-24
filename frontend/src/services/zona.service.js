@@ -42,6 +42,14 @@ export const zonaService = {
   },
 
   
+  getZonaById: async (id, filtros = {}) => {
+    const params = new URLSearchParams(filtros);
+    const url = params.toString() ? `/zonas/${id}?${params}` : `/zonas/${id}`;
+    const response = await clientAxios.get(url);
+    return response.data;
+  },
+
+  
   crearZona: async (datos) => {
     const response = await clientAxios.post("/zonas", datos);
     return response.data;
@@ -60,6 +68,18 @@ export const zonaService = {
   },
 
   
+  asignarCliente: async (idZona, idCliente) => {
+    const response = await clientAxios.post(`/zonas/${idZona}/clientes/${idCliente}`);
+    return response.data;
+  },
+
+  
+  eliminarCliente: async (idZona, idCliente) => {
+    const response = await clientAxios.delete(`/zonas/eliminar-cliente/${idZona}/clientes/${idCliente}`);
+    return response.data;
+  },
+
+  
   asignarCobrador: async (id, cobradorId) => {
     const response = await clientAxios.post(
       `/zonas/${id}/cobrador`,
@@ -69,7 +89,18 @@ export const zonaService = {
   },
 
   
-  eliminarCobradorDeZona: async (id, cobradorId) => {
+  asignarCobradores: async (id, cobradoresIds) => {
+    
+    
+    const promesas = cobradoresIds.map(cobradorId => 
+      clientAxios.post(`/zonas/${id}/cobrador`, { cobradorId })
+    );
+    const responses = await Promise.all(promesas);
+    return responses[0].data; 
+  },
+
+  
+  eliminarCobrador: async (id, cobradorId) => {
     const response = await clientAxios.delete(`/zonas/${id}/cobrador/${cobradorId}`);
     return response.data;
   }

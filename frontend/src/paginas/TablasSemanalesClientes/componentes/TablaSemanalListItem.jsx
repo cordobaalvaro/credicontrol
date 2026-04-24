@@ -1,4 +1,5 @@
 import { Badge, Form, Button, Spinner } from "react-bootstrap"
+import { useNavigate } from "react-router-dom"
 import {
     IconCash,
     IconMapPin,
@@ -13,6 +14,7 @@ import {
 
 import { formatARS } from "../../../helpers/currency"
 import "./TablaSemanalListItem.css"
+
 const TablaSemanalListItem = ({
     item,
     editable = false,
@@ -39,6 +41,15 @@ const TablaSemanalListItem = ({
     montosEsperados = {},
     onMontoEsperadoChange = null,
 }) => {
+    const navigate = useNavigate();
+
+    const handleNavigateToPrestamo = () => {
+        const prestamoId = item?.prestamo?._id || item?.prestamo;
+        if (prestamoId) {
+            navigate(`/prestamo/${prestamoId}`);
+        }
+    }
+
     const formatDate = (fecha) => {
         if (!fecha) return "-";
         const d = new Date(fecha);
@@ -89,7 +100,11 @@ const TablaSemanalListItem = ({
     const primeraCuota = Array.isArray(item?.cuotasSemana) ? item.cuotasSemana[0] : null
     return (
         <div className="list-item tabla-semanal-list-item">
-            <div className="list-item-header">
+            <div 
+                className="list-item-header" 
+                onClick={handleNavigateToPrestamo}
+                style={{ cursor: 'pointer' }}
+            >
                 <div className="list-item-icon success">
                     <IconCash />
                 </div>
@@ -142,14 +157,22 @@ const TablaSemanalListItem = ({
                 </div>
             </div>
             <div className="list-item-info">
-                <div className="list-item-info-item info-total">
+                <div 
+                    className="list-item-info-item info-total"
+                    onClick={handleNavigateToPrestamo}
+                    style={{ cursor: 'pointer' }}
+                >
                     <span className="list-item-info-label">
                         <IconMoneybag size={14} />
                         Total
                     </span>
                     <span className="list-item-info-value">{formatMonto(getMontoTotal())}</span>
                 </div>
-                <div className="list-item-info-item info-pendiente">
+                <div 
+                    className="list-item-info-item info-pendiente"
+                    onClick={handleNavigateToPrestamo}
+                    style={{ cursor: 'pointer' }}
+                >
                     <span className="list-item-info-label">
                         <IconTrendingDown size={14} />
                         Pendiente
@@ -157,7 +180,11 @@ const TablaSemanalListItem = ({
                     <span className="list-item-info-value">{formatMonto(getSaldoPendiente())}</span>
                 </div>
                 {hasSaldoVencido && (
-                    <div className="list-item-info-item info-vencido">
+                    <div 
+                        className="list-item-info-item info-vencido"
+                        onClick={handleNavigateToPrestamo}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <span className="list-item-info-label">
                             <IconAlertCircle size={14} />
                             Vencido
@@ -166,7 +193,11 @@ const TablaSemanalListItem = ({
                     </div>
                 )}
                 {!esPrestamoVencido() && (
-                    <div className="list-item-info-item info-esperado">
+                    <div 
+                        className="list-item-info-item info-esperado"
+                        style={!editable ? { cursor: 'pointer' } : {}}
+                        onClick={!editable ? handleNavigateToPrestamo : undefined}
+                    >
                         <span className="list-item-info-label">
                             <IconCalendar size={14} />
                             Esperado
@@ -224,7 +255,11 @@ const TablaSemanalListItem = ({
                     </div>
                 )}
                 {item?.deudaArrastrada > 0 && (
-                    <div className="list-item-info-item info-deuda-ant">
+                    <div 
+                        className="list-item-info-item info-deuda-ant"
+                        onClick={handleNavigateToPrestamo}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <span className="list-item-info-label">
                             <IconAlertTriangle size={14} />
                             Deuda Ant.
@@ -249,9 +284,14 @@ const TablaSemanalListItem = ({
                             onChange={(e) => onMontoChange?.(e.target.value)}
                         />
                     ) : (
-                        <span className="list-item-info-value text-success fw-bold">
-                            {formatMonto(getMontoCobrado())}
-                        </span>
+                        <div 
+                            style={{ cursor: 'pointer' }}
+                            onClick={handleNavigateToPrestamo}
+                        >
+                            <span className="list-item-info-value text-success fw-bold">
+                                {formatMonto(getMontoCobrado())}
+                            </span>
+                        </div>
                     )}
                 </div>
                 {showGuardarItem && item.estado !== "cargado" ? (

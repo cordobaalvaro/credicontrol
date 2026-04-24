@@ -24,7 +24,7 @@ const InfoCard = ({ icon: Icon, label, value }) => (
   </div>
 )
 const ClienteInfoReadOnly = ({ cliente }) => {
-  const leftColumn = [
+  const infoItems = [
     { icon: IconHash, label: "N° Cliente", value: cliente.numero },
     { icon: IconId, label: "DNI", value: cliente.dni },
     { icon: IconPhone, label: "Teléfono", value: cliente.telefono },
@@ -35,8 +35,6 @@ const ClienteInfoReadOnly = ({ cliente }) => {
     },
     { icon: IconMapPin, label: "Localidad", value: cliente.localidad },
     { icon: IconBuildingStore, label: "Dirección Comercial", value: cliente.direccionComercial },
-  ]
-  const rightColumn = [
     { icon: IconHome, label: "Dirección", value: cliente.direccion },
     { icon: IconBuilding, label: "Barrio", value: cliente.barrio },
     { icon: IconMap2, label: "Ciudad", value: cliente.ciudad },
@@ -52,18 +50,12 @@ const ClienteInfoReadOnly = ({ cliente }) => {
     { icon: IconMap, label: "Zona", value: cliente.zona?.nombre || "Sin zona asignada" },
     { icon: IconShoppingBag, label: "Tipo de Comercio", value: cliente.tipoDeComercio },
   ]
+
   return (
     <div className="cliente-info-grid">
-      <div className="cliente-info-column">
-        {leftColumn.map((item, idx) => (
-          <InfoCard key={idx} {...item} />
-        ))}
-      </div>
-      <div className="cliente-info-column">
-        {rightColumn.map((item, idx) => (
-          <InfoCard key={idx} {...item} />
-        ))}
-      </div>
+      {infoItems.map((item, idx) => (
+        <InfoCard key={idx} {...item} />
+      ))}
     </div>
   )
 }

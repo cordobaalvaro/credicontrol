@@ -112,11 +112,11 @@ const DashboardCobrador = () => {
         <Row className="g-3 mb-4">
           <Col md={4}>
             <TablaListCard
-              title="Vencidos Hoy"
-              count={metricasDia?.itemsTabla?.vencidosHoy?.cantidad}
-              montoTotal={metricasDia?.itemsTabla?.vencidosHoy?.monto}
-              items={metricasDia?.itemsTabla?.vencidosHoy?.detalles}
-              icon={IconExclamationCircle}
+              title="Vencidos"
+              count={metricasDia?.itemsTabla?.vencidos?.cantidad}
+              montoTotal={metricasDia?.itemsTabla?.vencidos?.monto}
+              items={metricasDia?.itemsTabla?.vencidos?.detalles}
+              icon={IconAlertTriangle}
               variant="danger"
               emptyMessage="No hay items vencidos"
               emptyIcon={IconExclamationCircle}
@@ -130,10 +130,10 @@ const DashboardCobrador = () => {
           </Col>
           <Col md={4}>
             <TablaListCard
-              title="Próximos a Cobrar"
-              count={metricasDia?.itemsTabla?.proximos?.cantidad}
-              montoTotal={metricasDia?.itemsTabla?.proximos?.monto}
-              items={metricasDia?.itemsTabla?.proximos?.detalles}
+              title="Activos"
+              count={metricasDia?.itemsTabla?.activos?.cantidad}
+              montoTotal={metricasDia?.itemsTabla?.activos?.monto}
+              items={metricasDia?.itemsTabla?.activos?.detalles}
               icon={IconCalendarEvent}
               variant="warning"
               emptyMessage="No hay próximos items"

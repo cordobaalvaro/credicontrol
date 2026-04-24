@@ -28,6 +28,9 @@ const TablaSemanalCard = ({ tabla, onTablaActualizada, onTablaEliminada, onActua
         <div className="d-flex justify-content-between align-items-start mb-3 tabla-semanal-header">
           <div>
             <Card.Title className="mb-2 fw-bold tabla-semanal-title">
+              {tabla.numeroTabla && (
+                <span className="text-success me-2">#{tabla.numeroTabla}</span>
+              )}
               Semana del {formatearFecha(tabla.fechaInicio)} al {formatearFecha(tabla.fechaFin)}
             </Card.Title>
             <Card.Subtitle className="text-muted small d-flex align-items-center gap-2">

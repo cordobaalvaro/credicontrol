@@ -9,7 +9,14 @@
     --item-bg: var(--item-bg-color, #f8f9fa);
     --item-border: var(--item-border-color, #e9ecef);
     --tabla-icon-color: var(--icon-color, #6b7280);
+    transition: all 0.2s ease;
 }
+
+.tabla-list-item:hover {
+    background-color: #f1f5f9;
+    transform: translateX(4px);
+}
+
 .tabla-list-item-meta {
     margin-bottom: 2px;
 }

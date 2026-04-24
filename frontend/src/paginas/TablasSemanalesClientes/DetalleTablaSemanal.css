@@ -121,6 +121,7 @@
     padding: 1.5rem 1.25rem 1rem 1.25rem;
     background: transparent;
     flex: 1;
+    min-height: 500px;
 }
 @media (max-width: 768px) {
     .detalle-tabla-semanal-page .modal-detalles-body {

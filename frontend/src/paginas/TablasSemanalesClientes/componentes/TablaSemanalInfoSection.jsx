@@ -33,9 +33,16 @@ const TablaSemanalInfoSection = ({ tabla }) => {
     },
     {
       icon: IconCash,
-      label: "Monto Esperado",
-      value: formatMonto(tabla.montoTotalEsperado),
-      variant: "warning",
+      label: "Esp. Activos",
+      value: formatMonto(tabla.montoTotalEsperadoActivos || 0),
+      variant: "success",
+      hideOnMobile: true,
+    },
+    {
+      icon: IconAlertTriangle,
+      label: "Esp. Vencidos",
+      value: formatMonto(tabla.montoTotalEsperadoVencidos || 0),
+      variant: "danger",
       hideOnMobile: true,
     },
     {

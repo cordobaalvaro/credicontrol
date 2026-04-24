@@ -94,11 +94,11 @@ const obtenerMetricasOperativas = async (mes, anio) => {
         { $sort: { "_id.year": -1, "_id.week": -1 } }
       ]),
       PrestamoModel.aggregate([
-        { $match: { $or: [{ createdAt: { $gte: fechaHaceUnMes } }, { fechaCancelacion: { $gte: fechaHaceUnMes } }] } },
+        { $match: { $or: [{ fechaInicio: { $gte: fechaHaceUnMes } }, { fechaCancelacion: { $gte: fechaHaceUnMes } }] } },
         {
           $group: {
             _id: null,
-            nuevos: { $sum: { $cond: [{ $gte: ["$createdAt", fechaHaceUnMes] }, 1, 0] } },
+            nuevos: { $sum: { $cond: [{ $gte: ["$fechaInicio", fechaHaceUnMes] }, 1, 0] } },
             cancelados: { $sum: { $cond: [{ $gte: ["$fechaCancelacion", fechaHaceUnMes] }, 1, 0] } }
           }
         }
@@ -218,7 +218,7 @@ const obtenerEstadisticasGananciasZonas = async (mes, anio) => {
       },
       {
         $group: {
-          _id: "$_id", zona: { $first: "$zona" }, createdAt: { $first: "$createdAt" },
+          _id: "$_id", zona: { $first: "$zona" }, fechaInicio: { $first: "$fechaInicio" },
           montoInicial: { $first: "$montoInicial" }, montoTotal: { $first: "$montoTotal" },
           tipo: { $first: "$tipo" }, registroCobros: { $first: "$registroCobros" },
           totalCuotasEsperadasMes: { $sum: "$cuotaEsperadaMes" }
@@ -246,7 +246,7 @@ const obtenerEstadisticasGananciasZonas = async (mes, anio) => {
           montoInicialMes: {
             $first: {
               $cond: [
-                { $and: [{ $gte: ["$createdAt", primerDiaMes] }, { $lt: ["$createdAt", ultimoDiaMes] }, { $ne: ["$tipo", "refinanciado"] }] },
+                { $and: [{ $gte: ["$fechaInicio", primerDiaMes] }, { $lt: ["$fechaInicio", ultimoDiaMes] }, { $ne: ["$tipo", "refinanciado"] }] },
                 "$montoInicial", 0
               ]
             }
@@ -325,6 +325,55 @@ const obtenerPrestamosCobradosMes = async (mes, anio) => {
   }
 };
 
+const obtenerPrestamosPrestadosMes = async (mes, anio) => {
+  try {
+    const { primerDiaMes, ultimoDiaMes } = getFiltroFechas(mes, anio);
+    const prestados = await PrestamoModel.aggregate([
+      {
+        $match: {
+          fechaInicio: { $gte: primerDiaMes, $lte: ultimoDiaMes },
+          tipo: { $ne: "refinanciado" }
+        }
+      },
+      {
+        $lookup: {
+          from: "clientes",
+          localField: "cliente",
+          foreignField: "_id",
+          as: "clienteInfo"
+        }
+      },
+      { $unwind: "$clienteInfo" },
+      {
+        $lookup: {
+          from: "zonas",
+          localField: "zona",
+          foreignField: "_id",
+          as: "zonaInfo"
+        }
+      },
+      { $unwind: { path: "$zonaInfo", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          numero: 1,
+          cliente: { nombre: "$clienteInfo.nombre", dni: "$clienteInfo.dni" },
+          zona: { nombre: "$zonaInfo.nombre" },
+          montoInicial: 1,
+          montoTotal: 1,
+          fechaInicio: 1,
+          tipo: 1,
+          estado: 1
+        }
+      },
+      { $sort: { fechaInicio: -1 } }
+    ]);
+    return { status: 200, msg: "Préstamos prestados obtenidos correctamente", data: prestados };
+  } catch (error) {
+    console.error("Error al obtener préstamos prestados mes:", error);
+    throw error;
+  }
+};
+
 const obtenerTodasLasZonas = async () => {
   try {
     const resZonas = await obtenerZonasBD();
@@ -363,5 +412,5 @@ const obtenerTodasLasZonas = async () => {
 
 module.exports = {
   obtenerMetricasFinancieras, obtenerMetricasOperativas, obtenerAlertasPrestamos,
-  obtenerEstadisticasGananciasZonas, obtenerMetricasCobrador, obtenerPrestamosCobradosMes, obtenerTodasLasZonas
+  obtenerEstadisticasGananciasZonas, obtenerMetricasCobrador, obtenerPrestamosCobradosMes, obtenerPrestamosPrestadosMes, obtenerTodasLasZonas
 };

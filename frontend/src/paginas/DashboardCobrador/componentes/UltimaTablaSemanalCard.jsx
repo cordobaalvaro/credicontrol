@@ -66,7 +66,7 @@ const UltimaTablaSemanalCard = ({ metricasDia, onCerrarTabla, onVerDetalles }) =
                       <Badge
                         className="rounded-pill px-2 py-1 ultima-tabla-badge ultima-tabla-badge--week"
                       >
-                        Semana {metricasDia.ultimaTabla.semana}
+                        {metricasDia.ultimaTabla.numeroTabla ? `Tabla #${metricasDia.ultimaTabla.numeroTabla}` : `Semana ${metricasDia.ultimaTabla.semana}`}
                       </Badge>
                     </div>
                   </div>
@@ -75,10 +75,10 @@ const UltimaTablaSemanalCard = ({ metricasDia, onCerrarTabla, onVerDetalles }) =
                     {new Date(metricasDia.ultimaTabla.fechaFin).toLocaleDateString()}
                   </div>
                 </div>
-                <Row className="g-3">
-                  <Col md={3}>
-                    <div className="text-center p-3 rounded-3 ultima-tabla-metric">
-                      <div className="h4 mb-1 fw-bold ultima-tabla-metric-value">
+                <Row className="g-2">
+                  <Col xs={4} md={2}>
+                    <div className="text-center p-2 rounded-3 ultima-tabla-metric">
+                      <div className="h5 mb-1 fw-bold ultima-tabla-metric-value">
                         {metricasDia.ultimaTabla.totalItems || 0}
                       </div>
                       <div className="small mb-0 ultima-tabla-metric-label">
@@ -86,19 +86,29 @@ const UltimaTablaSemanalCard = ({ metricasDia, onCerrarTabla, onVerDetalles }) =
                       </div>
                     </div>
                   </Col>
-                  <Col md={3}>
-                    <div className="text-center p-3 rounded-3 ultima-tabla-metric">
-                      <div className="h4 mb-1 fw-bold ultima-tabla-metric-value">
-                        ${metricasDia.ultimaTabla.montoTotalEsperado?.toLocaleString() || 0}
+                  <Col xs={4} md={3}>
+                    <div className="text-center p-2 rounded-3 ultima-tabla-metric">
+                      <div className="h5 mb-1 fw-bold ultima-tabla-metric-value text-success">
+                        ${metricasDia.ultimaTabla.montoTotalEsperadoActivos?.toLocaleString() || 0}
                       </div>
                       <div className="small mb-0 ultima-tabla-metric-label">
-                        Total Esperado
+                        Esp. Activos
                       </div>
                     </div>
                   </Col>
-                  <Col md={3}>
-                    <div className="text-center p-3 rounded-3 ultima-tabla-metric">
-                      <div className="h4 mb-1 fw-bold ultima-tabla-metric-value">
+                  <Col xs={4} md={3}>
+                    <div className="text-center p-2 rounded-3 ultima-tabla-metric">
+                      <div className="h5 mb-1 fw-bold ultima-tabla-metric-value text-danger">
+                        ${metricasDia.ultimaTabla.montoTotalEsperadoVencidos?.toLocaleString() || 0}
+                      </div>
+                      <div className="small mb-0 ultima-tabla-metric-label">
+                        Esp. Vencidos
+                      </div>
+                    </div>
+                  </Col>
+                  <Col xs={6} md={2}>
+                    <div className="text-center p-2 rounded-3 ultima-tabla-metric">
+                      <div className="h5 mb-1 fw-bold ultima-tabla-metric-value">
                         ${metricasDia.ultimaTabla.montoTotalCobrado?.toLocaleString() || 0}
                       </div>
                       <div className="small mb-0 ultima-tabla-metric-label">
@@ -106,9 +116,9 @@ const UltimaTablaSemanalCard = ({ metricasDia, onCerrarTabla, onVerDetalles }) =
                       </div>
                     </div>
                   </Col>
-                  <Col md={3}>
-                    <div className="text-center p-3 rounded-3 ultima-tabla-metric">
-                      <div className="h4 mb-1 fw-bold ultima-tabla-metric-value">
+                  <Col xs={6} md={2}>
+                    <div className="text-center p-2 rounded-3 ultima-tabla-metric">
+                      <div className="h5 mb-1 fw-bold ultima-tabla-metric-value">
                         {metricasDia.ultimaTabla.montoTotalEsperado > 0
                           ? (
                             ((metricasDia.ultimaTabla.montoTotalCobrado || 0) /

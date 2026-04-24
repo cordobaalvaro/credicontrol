@@ -13,7 +13,14 @@ const obtenerTablaSemanal = async (tablaId) => {
     }
 
     const tablaPlana = tabla.toObject ? tabla.toObject() : tabla
-    return { status: 200, msg: "Tabla semanal obtenida correctamente", data: tablaPlana }
+
+    // Si los nuevos campos de totales esperados están en 0, recalculamos (para arreglar datos viejos)
+    if ((tabla.montoTotalEsperadoActivos === 0 && tabla.montoTotalEsperadoVencidos === 0) && tabla.montoTotalEsperado > 0) {
+      await recalcularTotales(tabla);
+      await tabla.save();
+    }
+
+    return { status: 200, msg: "Tabla semanal obtenida correctamente", data: tabla }
   } catch (error) {
     return { status: 500, msg: "Error al obtener la tabla semanal: " + error.message, data: null }
   }

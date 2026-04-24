@@ -42,7 +42,7 @@ const ClientesListView = ({
             {
               icon: IconTrash,
               label: "Eliminar",
-              onClick: () => eliminarCliente(cliente._id),
+              onClick: () => eliminarCliente(cliente),
               variant: "danger"
             }
           ]

@@ -32,7 +32,7 @@ const guardarMontoItemTablaSemanalCobrador = async (cobradorId, tablaId, itemId,
     item.montoCobrado = monto
     item.estado = "reportado"
 
-    recalcularTotales(tabla)
+    await recalcularTotales(tabla)
     await tabla.save()
 
     const tablaPopulada = await populateTabla(TablaSemanalClientesModel.findById(tablaId))

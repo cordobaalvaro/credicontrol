@@ -67,7 +67,8 @@ const generarTablaSemanalAdmin = async ({ cobradorId, fechaInicio, fechaFin, adm
         return fv >= inicio && fv <= fin && (cuota.estado === "pendiente" || cuota.estado === "cobrado")
       })
 
-      if (!cuotasSemana.length) continue
+      // Siempre traemos los préstamos vencidos, aunque no tengan cuotas en esta semana
+      if (!cuotasSemana.length && prestamo.estado !== "vencido") continue
 
       const zonaItem = clienteZonaMap.get(String(prestamo.cliente))
       if (!zonaItem) continue
@@ -155,22 +156,18 @@ const generarTablaSemanalAdmin = async ({ cobradorId, fechaInicio, fechaFin, adm
       }
     }
 
-    const montoTotalEsperado = items.reduce((sum, item) => sum + (item.montoCuotasEsperadoSemana || 0), 0)
-    const montoTotalDeudaArrastrada = items.reduce((sum, item) => sum + (item.deudaArrastrada || 0), 0)
-
     const tabla = new TablaSemanalClientesModel({
       cobrador: cobradorId,
       zonas: zonaIds,
       fechaInicio: inicio,
       fechaFin: fin,
       estado: "borrador",
-      montoTotalEsperado,
-      montoTotalDeudaArrastrada,
       montoTotalCobrado: 0,
       items,
       creadoPor: adminId || null,
     })
 
+    await recalcularTotales(tabla)
     await tabla.save()
 
     const tablaPopulada = await populateTabla(TablaSemanalClientesModel.findById(tabla._id))
@@ -360,7 +357,7 @@ const agregarItemTablaAdmin = async (tablaId, prestamoId) => {
         saldoPendienteVencimiento: prestamo.saldoPendienteVencimiento || 0, montoCobrado: 0,
         estado: tabla.estado === "enviada" ? "enviado" : "pendiente",
       })
-      recalcularTotales(tabla); await tabla.save()
+      await recalcularTotales(tabla); await tabla.save()
       return { status: 200, msg: "Préstamo vencido agregado exitosamente", data: await populateTabla(TablaSemanalClientesModel.findById(tablaId)) }
     }
 
@@ -380,7 +377,7 @@ const agregarItemTablaAdmin = async (tablaId, prestamoId) => {
       estado: tabla.estado === "enviada" ? "enviado" : "pendiente",
     })
 
-    recalcularTotales(tabla); await tabla.save()
+    await recalcularTotales(tabla); await tabla.save()
     return { status: 200, msg: `Se agregaron ${cuotasSemana.length} cuotas`, data: await populateTabla(TablaSemanalClientesModel.findById(tablaId)) }
   } catch (error) {
     return { status: 500, msg: "Error: " + error.message, data: null }
@@ -397,7 +394,7 @@ const eliminarItemAdmin = async (tablaId, itemId) => {
 
     const itemEliminado = { _id: item._id, cliente: item.cliente, prestamo: item.prestamo, estado: item.estado }
     tabla.items.pull(itemId)
-    recalcularTotales(tabla); await tabla.save()
+    await recalcularTotales(tabla); await tabla.save()
     return { status: 200, msg: "Item eliminado", data: { tabla: await populateTabla(TablaSemanalClientesModel.findById(tablaId)), itemEliminado } }
   } catch (error) {
     return { status: 500, msg: error.message, data: null }
@@ -431,7 +428,7 @@ const trasladarItems = async (tablaOrigenId, itemsIds, tablaDestinoId) => {
     })
 
     itemsIds.forEach((id) => tablaOrigen.items.pull(id))
-    recalcularTotales(tablaOrigen); recalcularTotales(tablaDestino)
+    await recalcularTotales(tablaOrigen); await recalcularTotales(tablaDestino)
     await Promise.all([tablaOrigen.save(), tablaDestino.save()])
     return { status: 200, msg: "Traslado exitoso", data: { tablaOrigen: await populateTabla(TablaSemanalClientesModel.findById(tablaOrigenId)), tablaDestino: await populateTabla(TablaSemanalClientesModel.findById(tablaDestinoId)) } }
   } catch (error) {
@@ -453,7 +450,7 @@ const modificarEsperado = async ({ tablaId, itemId, nuevoMontoEsperado, numeroCu
 
     item.montoCuotasEsperadoSemana = nuevoMontoEsperado
     if (item.cuotasSemana.length > 0) item.cuotasSemana[0].monto = nuevoMontoEsperado
-    recalcularTotales(tabla); await tabla.save()
+    await recalcularTotales(tabla); await tabla.save()
     return { status: 200, msg: "Actualizado", data: { itemActualizado: item } }
   } catch (error) {
     return { status: 500, msg: error.message, data: null }

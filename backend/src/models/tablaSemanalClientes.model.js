@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const CounterModel = require("./counter.model")
 
 const itemTablaSemanalSchema = new mongoose.Schema(
   {
@@ -105,6 +106,16 @@ const tablaSemanalClientesSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    montoTotalEsperadoActivos: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    montoTotalEsperadoVencidos: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     montoTotalCobrado: {
       type: Number,
       default: 0,
@@ -125,11 +136,45 @@ const tablaSemanalClientesSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Usuario",
     },
+    numeroTabla: {
+      type: Number,
+      unique: true,
+      min: 1,
+    },
   },
   {
     timestamps: true,
   },
 )
+
+tablaSemanalClientesSchema.pre("save", async function (next) {
+  if (this.isNew && this.numeroTabla == null) {
+    const TablaModel = mongoose.model("TablaSemanalClientes")
+    const totalTablas = await TablaModel.countDocuments()
+
+    if (totalTablas === 0) {
+      await CounterModel.findByIdAndUpdate(
+        { _id: "tablaSemanal" },
+        { $set: { seq: 1 } },
+        { upsert: true },
+      )
+      this.numeroTabla = 1
+    } else {
+      const ultimaTabla = await TablaModel.findOne({}, { numeroTabla: 1 }).sort({
+        numeroTabla: -1,
+      })
+      const siguienteNumero = (ultimaTabla?.numeroTabla || 0) + 1
+
+      await CounterModel.findByIdAndUpdate(
+        { _id: "tablaSemanal" },
+        { $set: { seq: siguienteNumero } },
+        { upsert: true },
+      )
+      this.numeroTabla = siguienteNumero
+    }
+  }
+  next()
+})
 
 const TablaSemanalClientesModel = mongoose.model(
   "TablaSemanalClientes",

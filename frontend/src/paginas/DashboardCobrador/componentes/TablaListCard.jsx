@@ -1,6 +1,8 @@
 import { Card, Button } from "react-bootstrap"
 import { IconMapPin, IconDeviceFloppy } from "@tabler/icons-react"
+import { useNavigate } from "react-router-dom"
 import "./TablaListCard.css"
+
 const TablaListCard = ({
     title,
     count,
@@ -17,6 +19,14 @@ const TablaListCard = ({
     savingInline,
     tablaId
 }) => {
+    const navigate = useNavigate();
+
+    const handleNavigateToPrestamo = (prestamoId) => {
+        if (prestamoId) {
+            navigate(`/prestamo/${prestamoId}`);
+        }
+    };
+
     return (
         <Card className={`border-0 shadow-sm tabla-list-card ${variant ? `tabla-list-card--${variant}` : ""}`}>
             <Card.Header className="border-0 bg-transparent py-3">
@@ -54,7 +64,11 @@ const TablaListCard = ({
                         {items.map((item, index) => (
                             <div key={index} className="d-flex align-items-start p-2 rounded-2 mb-2 tabla-list-item">
                                 <div className="flex-grow-1 pe-2" style={{ minWidth: 0 }}>
-                                    <div className="d-flex justify-content-between align-items-start">
+                                    <div 
+                                        className="d-flex justify-content-between align-items-start"
+                                        onClick={() => handleNavigateToPrestamo(item.prestamo?._id)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
                                         <div className="flex-grow-1">
                                             <div className="fw-medium text-truncate tabla-list-item-title">
                                                 {item.cliente?.nombre || "Cliente"}
@@ -66,10 +80,11 @@ const TablaListCard = ({
                                                 <IconMapPin size={12} className="tabla-list-map-pin" />
                                                 {getDireccionCobroFinal(item.cliente)}
                                             </div>
-                                            <div className="d-flex gap-2 mb-1">
+                                            <div className="d-flex gap-2 mb-1 flex-wrap">
                                                 {item.deudaArrastrada > 0 && (
                                                     <span className="badge bg-danger text-white border tabla-list-pill">Atrasado: ${item.deudaArrastrada?.toLocaleString()}</span>
                                                 )}
+                                                <span className="badge bg-info-subtle text-info-emphasis border border-info-subtle tabla-list-pill">Saldo: ${item.saldoPendiente?.toLocaleString() || 0}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -91,13 +106,30 @@ const TablaListCard = ({
                                         </Button>
                                     </div>
                                 </div>
-                                <div className="text-end ms-2 tabla-list-right">
-                                    <div className="fw-semibold tabla-list-right-amount">
-                                        ${item.monto?.toLocaleString() || 0}
-                                    </div>
-                                    <div className="small text-muted tabla-list-right-date">
-                                        {item.fechaVencimiento ? new Date(item.fechaVencimiento).toLocaleDateString() : "-"}
-                                    </div>
+                                <div 
+                                    className="text-end ms-2 tabla-list-right"
+                                    onClick={() => handleNavigateToPrestamo(item.prestamo?._id)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    {title === "Vencidos" ? (
+                                        <>
+                                            <div className="fw-bold text-danger tabla-list-right-amount" style={{ fontSize: '1rem' }}>
+                                                ${item.saldoPendienteVencimiento?.toLocaleString() || 0}
+                                            </div>
+                                            <div className="small text-muted fw-medium tabla-list-right-cuota" style={{ color: '#94a3b8' }}>
+                                                Cuota: ${item.montoCuota?.toLocaleString() || 0}
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="fw-semibold tabla-list-right-amount">
+                                                ${item.monto?.toLocaleString() || 0}
+                                            </div>
+                                            <div className="small text-muted tabla-list-right-date">
+                                                {item.fechaVencimiento ? new Date(item.fechaVencimiento).toLocaleDateString() : "-"}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         ))}

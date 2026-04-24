@@ -44,11 +44,6 @@ const login = async (req, res) => {
 
 const refresh = async (req, res) => {
   const token = req.cookies?.[COOKIE_NAME];
-
-  
-  
-  
-  
   
   if (!token) {
     return res.status(401).json({ msg: "Usuario o contraseña incorrectos" });

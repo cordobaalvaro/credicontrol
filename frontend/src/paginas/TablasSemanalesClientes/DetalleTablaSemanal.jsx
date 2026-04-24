@@ -71,9 +71,10 @@ const DetalleTablaSemanal = () => {
         <div className="modal-detalles-header d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center gap-2 flex-wrap">
             <h5 className="mb-0 d-flex align-items-center gap-2">
-              <span className="d-none d-md-inline">Detalles de la Tabla Semanal</span>
+              <span className="d-none d-md-inline">Detalles de la Tabla Semanal </span>
+              {tablaLocal?.numeroTabla && <span className="text-success fw-bold">#{tablaLocal.numeroTabla}</span>}
               {tablaLocal?.cobrador && (
-                <span className="badge detalle-tabla-cobrador-badge px-3 py-2">
+                <span className="badge detalle-tabla-cobrador-badge px-3 py-2 ms-2">
                   {tablaLocal.cobrador.nombre || tablaLocal.cobrador.email}
                 </span>
               )}

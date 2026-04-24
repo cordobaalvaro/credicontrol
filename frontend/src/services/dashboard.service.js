@@ -68,6 +68,17 @@ export const dashboardService = {
     const params = new URLSearchParams({ mes, anio });
     const response = await clientAxios.get(`/dashboard/estadisticas-ganancias?${params}`);
     return response.data;
+  },
+
+  getPrestamosPrestadosMes: async (mes, anio) => {
+    const params = new URLSearchParams({ mes, anio });
+    const response = await clientAxios.get(`/dashboard/prestamos-prestados-mes?${params}`);
+    return response.data;
+  },
+
+  actualizarPrestamosManual: async () => {
+    const response = await clientAxios.post("/dashboard/actualizar-prestamos");
+    return response.data;
   }
 };
 

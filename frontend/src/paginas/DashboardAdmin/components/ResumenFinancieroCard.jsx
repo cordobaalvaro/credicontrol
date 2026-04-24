@@ -1,7 +1,7 @@
 "use client"
 import { Card, Row, Col } from "react-bootstrap"
 import { IconCurrencyDollar } from "@tabler/icons-react"
-const ResumenFinancieroCard = ({ dashboardData, onShowCobradosMes }) => {
+const ResumenFinancieroCard = ({ dashboardData, onShowCobradosMes, onShowPrestadosMes }) => {
   return (
     <Card className="border-0 shadow-sm mb-4 resumen-financiero-card">
       <Card.Header className="border-0 bg-transparent py-4">
@@ -25,7 +25,10 @@ const ResumenFinancieroCard = ({ dashboardData, onShowCobradosMes }) => {
         {dashboardData?.resumenFinancieroGlobal || dashboardData?.metricasFinancieras ? (
           <Row className="g-3">
             <Col xs={6} lg>
-              <div className="text-center p-3 rounded-3 resumen-financiero-metric resumen-financiero-metric--prestado">
+              <div
+                className="text-center p-3 rounded-3 clickable-metric-card resumen-financiero-metric resumen-financiero-metric--prestado"
+                onClick={onShowPrestadosMes}
+              >
                 <div className="h5 mb-1 fw-bold resumen-financiero-value resumen-financiero-value--dark">
                   ${(dashboardData.resumenFinancieroGlobal?.totalPrestado || 0).toLocaleString()}
                 </div>

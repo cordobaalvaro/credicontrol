@@ -1,7 +1,8 @@
 "use client"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Container, Row, Col, Alert, Form } from "react-bootstrap"
+import { Container, Row, Col, Alert, Form, Button, Spinner } from "react-bootstrap"
+import { IconRefresh } from "@tabler/icons-react"
 import PageHeader from "../../componentes/layout/PageHeader"
 import PageLoading from "../../componentes/ui/PageLoading"
 import "./DashboardAdmin.css"
@@ -15,6 +16,7 @@ import ResumenFinancieroCard from "./components/ResumenFinancieroCard"
 import MetricasOperativasCard from "./components/MetricasOperativasCard"
 import AlertasPrestamosCard from "./components/AlertasPrestamosCard"
 import CobradosMesModal from "./components/CobradosMesModal"
+import PrestadosMesModal from "./components/PrestadosMesModal"
 import GestionZonasModal from "./components/GestionZonasModal"
 import useDashboardAdmin from "../../hooks/useDashboardAdmin"
 import useZonas from "../../hooks/useZonas"
@@ -32,11 +34,17 @@ const DashboardAdmin = () => {
     setShowCobradoresModal,
     showCobradosMesModal,
     setShowCobradosMesModal,
+    showPrestadosMesModal,
+    setShowPrestadosMesModal,
     showZonasModal,
     setShowZonasModal,
     cobradosMesData,
     loadingCobradosMes,
-    fetchDashboardData
+    prestadosMesData,
+    loadingPrestadosMes,
+    actualizandoPrestamos,
+    fetchDashboardData,
+    handleActualizarPrestamos
   } = useDashboardAdmin()
   const {
     zonasData,
@@ -106,6 +114,25 @@ const DashboardAdmin = () => {
         ]}
         rightContent={
           <div className="d-flex align-items-center gap-3 flex-wrap justify-content-end">
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={handleActualizarPrestamos}
+              disabled={actualizandoPrestamos}
+              className="d-flex align-items-center"
+            >
+              {actualizandoPrestamos ? (
+                <>
+                  <Spinner animation="border" size="sm" className="me-2" />
+                  Actualizando...
+                </>
+              ) : (
+                <>
+                  <IconRefresh size={18} className="me-2" />
+                  Actualizar Préstamos
+                </>
+              )}
+            </Button>
             <div className="d-flex gap-2 align-items-center flex-wrap justify-content-end">
               <Form.Group className="d-flex align-items-center">
                 <Form.Label className="mb-0 me-2 fw-medium text-muted">Mes:</Form.Label>
@@ -156,6 +183,7 @@ const DashboardAdmin = () => {
         <ResumenFinancieroCard
           dashboardData={dashboardData}
           onShowCobradosMes={() => setShowCobradosMesModal(true)}
+          onShowPrestadosMes={() => setShowPrestadosMesModal(true)}
         />
         <Row className="g-3 mb-4">
           <Col md={6}><GraficoGananciasZonas filtroMes={filtroMes} filtroAnio={filtroAnio} /></Col>
@@ -184,6 +212,12 @@ const DashboardAdmin = () => {
           onHide={() => setShowCobradosMesModal(false)}
           loading={loadingCobradosMes}
           cobradosMesData={cobradosMesData}
+        />
+        <PrestadosMesModal
+          show={showPrestadosMesModal}
+          onHide={() => setShowPrestadosMesModal(false)}
+          loading={loadingPrestadosMes}
+          prestadosMesData={prestadosMesData}
         />
         <GestionZonasModal
           show={showZonasModal}

@@ -1,14 +1,9 @@
-const {
+  const {
   obtenerDashboardAdmin,
-  obtenerMetricasFinancieras,
-  obtenerMetricasOperativas,
-  obtenerMovimientosRecientes,
-  obtenerAlertasPrestamos,
-  obtenerMetricasCobrador,
-  obtenerPrestamosCobradosMes,
   obtenerTodasLasZonas,
   obtenerEstadisticasGananciasZonas
 } = require("../services/dashboardAdmin.services");
+const { ejecutarActualizacionPrestamos } = require("../utils/prestamos.cron");
 
 
 const getDashboardAdmin = async (req, res) => {
@@ -156,6 +151,23 @@ const getPrestamosCobradosMes = async (req, res) => {
 };
 
 
+const getPrestamosPrestadosMes = async (req, res) => {
+  try {
+    const { mes, anio } = req.query;
+    const resultado = await obtenerPrestamosPrestadosMes(mes, anio);
+
+    return res.status(resultado.status).json(resultado);
+  } catch (error) {
+    console.error("Error en controller getPrestamosPrestadosMes:", error);
+    return res.status(500).json({
+      status: 500,
+      msg: "Error interno del servidor al obtener préstamos prestados del mes",
+      data: []
+    });
+  }
+};
+
+
 const getTodasLasZonas = async (req, res) => {
   try {
     const resultado = await obtenerTodasLasZonas();
@@ -188,6 +200,24 @@ const getEstadisticasGananciasZonas = async (req, res) => {
   }
 };
 
+const manualActualizacionPrestamos = async (req, res) => {
+  try {
+    await ejecutarActualizacionPrestamos();
+    return res.status(200).json({
+      status: 200,
+      msg: "Actualización de préstamos ejecutada correctamente",
+      data: null
+    });
+  } catch (error) {
+    console.error("Error en controller manualActualizacionPrestamos:", error);
+    return res.status(500).json({
+      status: 500,
+      msg: "Error interno al ejecutar la actualización manual",
+      data: null
+    });
+  }
+};
+
 module.exports = {
   getDashboardAdmin,
   getMetricasFinancieras,
@@ -196,6 +226,8 @@ module.exports = {
   getAlertasPrestamos,
   getMetricasCobrador,
   getPrestamosCobradosMes,
+  getPrestamosPrestadosMes,
   getTodasLasZonas,
-  getEstadisticasGananciasZonas
+  getEstadisticasGananciasZonas,
+  manualActualizacionPrestamos
 };

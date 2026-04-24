@@ -12,6 +12,14 @@ export default defineConfig({
   server: {
     port: 5173, // Puerto estándar de Vite
     strictPort: true, // Fallar si el puerto no está disponible
+    host: true, // Permitir acceso desde otros dispositivos en la red local
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
