@@ -510,7 +510,7 @@ const actualizarPrestamoBD = async (id, datos) => {
   }
 };
 
-const desactivarPrestamoBD = async (id) => {
+const desactivarPrestamoBD = async (id, observacion) => {
   try {
     const prestamo = await PrestamoModel.findById(id);
     if (!prestamo) {
@@ -522,6 +522,7 @@ const desactivarPrestamoBD = async (id) => {
     }
 
     prestamo.estado = "desactivado";
+    prestamo.observacionDesactivacion = observacion || null;
 
     const prestamoActualizado = await prestamo.save();
 
@@ -534,6 +535,40 @@ const desactivarPrestamoBD = async (id) => {
     return {
       status: 500,
       msg: "Error interno al desactivar el préstamo",
+      data: null,
+    };
+  }
+};
+
+const cancelarPrestamoBD = async (id, observacion) => {
+  try {
+    const prestamo = await PrestamoModel.findById(id);
+    if (!prestamo) {
+      return {
+        status: 404,
+        msg: "Préstamo no encontrado",
+        data: null,
+      };
+    }
+
+    prestamo.estado = "cancelado";
+    prestamo.fechaCancelacion = new Date();
+    prestamo.observacionCancelacion = observacion || null;
+    prestamo.interesSemanal = 0;
+    prestamo.saldoPendiente = 0;
+    prestamo.saldoPendienteVencimiento = undefined;
+
+    const prestamoActualizado = await prestamo.save();
+
+    return {
+      status: 200,
+      msg: "Préstamo cancelado manualmente",
+      data: prestamoActualizado,
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      msg: "Error interno al cancelar el préstamo",
       data: null,
     };
   }
@@ -761,4 +796,5 @@ module.exports = {
   actualizarPrestamoBD,
   desactivarPrestamoBD,
   activarPrestamoBD,
+  cancelarPrestamoBD,
 };

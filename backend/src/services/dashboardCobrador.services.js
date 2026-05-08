@@ -3,6 +3,7 @@ const UsuarioModel = require("../models/usuario.model");
 const ClienteModel = require("../models/cliente.model");
 const ZonaModel = require("../models/zona.model");
 const TablaSemanalClientesModel = require("../models/tablaSemanalClientes.model");
+const mongoose = require("mongoose");
 
 const obtenerInfoClientesPrestamos = async (cobradorId) => {
   try {
@@ -279,7 +280,7 @@ const obtenerInfoCobrador = async (cobradorId) => {
   }
 };
 
-const obtenerMetricasDia = async (cobradorId) => {
+const obtenerMetricasDia = async (cobradorId, tablaId = null) => {
   try {
     const toPlain = (doc) => {
       if (!doc) return doc;
@@ -300,11 +301,14 @@ const obtenerMetricasDia = async (cobradorId) => {
       return cliente.direccion || cliente.direccionComercial || "";
     };
 
-    const ultimaTabla = await TablaSemanalClientesModel.findOne({
-      cobrador: cobradorId,
-      estado: { $ne: "borrador" },
-    })
+    let query = { cobrador: cobradorId, estado: { $ne: "borrador" } };
+    if (tablaId && mongoose.Types.ObjectId.isValid(tablaId)) {
+      query = { _id: tablaId, cobrador: cobradorId };
+    }
+
+    const ultimaTabla = await TablaSemanalClientesModel.findOne(query)
       .sort({ createdAt: -1 })
+      .populate("zonas", "nombre")
       .populate({
         path: "items",
         populate: [
@@ -316,6 +320,14 @@ const obtenerMetricasDia = async (cobradorId) => {
           { path: "prestamo", select: "numero estado planDeCuotas" },
           { path: "zona", select: "nombre" },
         ],
+      })
+      .populate({
+        path: "rendiciones.items.cliente",
+        select: "nombre dni",
+      })
+      .populate({
+        path: "rendiciones.items.prestamo",
+        select: "numero",
       })
       .lean();
 
@@ -356,13 +368,14 @@ const obtenerMetricasDia = async (cobradorId) => {
         const prestamoPlain = toPlain(item.prestamo);
         const zonaPlain = toPlain(item.zona);
 
-        const firstCuotaSemana = (item.cuotasSemana && item.cuotasSemana.length > 0) ? item.cuotasSemana[0] : null;
+        const montoItem = (item.cuotasSemana && item.cuotasSemana.length > 0)
+          ? item.cuotasSemana.reduce((sum, c) => sum + (c.monto || 0), 0)
+          : (item.montoCuotasEsperadoSemana || 0);
+
         const montoCuotaBase = (prestamoPlain?.planDeCuotas && prestamoPlain.planDeCuotas.length > 0) 
           ? prestamoPlain.planDeCuotas[0].monto 
           : 0;
         
-        const montoItem = firstCuotaSemana ? firstCuotaSemana.monto : (item.montoCuotasEsperadoSemana || 0);
-
         const infoItem = {
           cliente: {
             ...(clientePlain || {}),
@@ -372,8 +385,8 @@ const obtenerMetricasDia = async (cobradorId) => {
           zona: zonaPlain,
           monto: montoItem,
           montoCuota: montoCuotaBase,
-          fechaVencimiento: firstCuotaSemana ? firstCuotaSemana.fechaVencimiento : null,
-          numeroCuota: firstCuotaSemana ? firstCuotaSemana.numero : null,
+          fechaVencimiento: (item.cuotasSemana && item.cuotasSemana.length > 0) ? item.cuotasSemana[0].fechaVencimiento : null,
+          numeroCuota: (item.cuotasSemana && item.cuotasSemana.length > 0) ? item.cuotasSemana[0].numero : null,
           montoTotalPrestamo: item.montoTotalPrestamo ?? 0,
           saldoPendiente: item.saldoPendiente ?? 0,
           saldoPendienteVencimiento: item.saldoPendienteVencimiento ?? 0,
@@ -382,18 +395,25 @@ const obtenerMetricasDia = async (cobradorId) => {
           deudaArrastrada: item.deudaArrastrada ?? 0,
         };
 
-        // Calculamos los totales esperados por estado de préstamo
-        if (prestamoPlain?.estado === "vencido") {
-          totalEsperadoVencidos += montoItem;
-        } else {
-          totalEsperadoActivos += montoItem;
-        }
+        // Calculamos cuánto es de la semana y cuánto es atrasado para los totales del dashboard
+        const fInicioStr = new Date(ultimaTabla.fechaInicio).toISOString().split('T')[0];
+        const fFinStr = new Date(ultimaTabla.fechaFin).toISOString().split('T')[0];
+        
+        const montoEnSemana = (item.cuotasSemana || []).filter(c => {
+          const fvStr = new Date(c.fechaVencimiento).toISOString().split('T')[0];
+          return fvStr >= fInicioStr && fvStr <= fFinStr;
+        }).reduce((sum, c) => sum + (c.monto || 0), 0);
+
+        const montoAtrasado = (item.montoCuotasEsperadoSemana || 0) - montoEnSemana;
+
+        totalEsperadoActivos += montoEnSemana;
+        totalEsperadoVencidos += Math.max(0, montoAtrasado);
 
         if (item.estado === "reportado") {
           itemsReportados++;
           montoReportados += item.montoCobrado || 0;
           detallesReportados.push(infoItem);
-        } else if (item.estado === "enviado") {
+        } else if (item.estado === "enviado" || item.estado === "pendiente") {
           if (prestamoPlain?.estado === "vencido") {
             itemsVencidos++;
             montoVencidos += infoItem.monto || 0;
@@ -423,9 +443,12 @@ const obtenerMetricasDia = async (cobradorId) => {
             ultimaTabla.items?.filter((item) => item.montoCobrado > 0)
               ?.length || 0,
           montoTotalCobrado: montoTotalCobrado,
-          montoTotalEsperado: montoTotalEsperado,
+          montoTotalEsperado: totalEsperadoActivos + totalEsperadoVencidos,
           montoTotalEsperadoActivos: totalEsperadoActivos,
           montoTotalEsperadoVencidos: totalEsperadoVencidos,
+          rendiciones: ultimaTabla.rendiciones || [],
+          numeroTabla: ultimaTabla.numeroTabla,
+          zonas: ultimaTabla.zonas || [],
         },
         itemsTabla: {
           vencidos: {
@@ -567,6 +590,7 @@ const obtenerResumenSemanal = async (cobradorId) => {
               (sum, item) => sum + (item.montoCobrado || 0),
               0,
             ) || 0,
+          numeroTabla: tablaMasReciente.numeroTabla,
         },
       },
     };
@@ -674,12 +698,12 @@ const obtenerProximosACobrar = async (cobradorId) => {
   }
 };
 
-const obtenerDashboardCobrador = async (cobradorId) => {
+const obtenerDashboardCobrador = async (cobradorId, tablaId = null) => {
   try {
     const [infoCobrador, metricasDia, resumenSemanal, proximosACobrar] =
       await Promise.all([
         obtenerInfoCobrador(cobradorId),
-        obtenerMetricasDia(cobradorId),
+        obtenerMetricasDia(cobradorId, tablaId),
         obtenerResumenSemanal(cobradorId),
         obtenerProximosACobrar(cobradorId),
       ]);

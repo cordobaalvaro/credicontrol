@@ -31,6 +31,17 @@ const DetallePrestamoInfoCard = ({ prestamo, onDescargarPDF }) => {
   if (isVencido) {
     infoItems.splice(3, 0, { label: "Interés Semanal", value: `$${prestamo.interesSemanal?.toLocaleString()}`, icon: "bi-percent", danger: true });
   }
+
+  if (prestamo.estado === "cancelado" && prestamo.observacionCancelacion) {
+    infoItems.push({ label: "Observación Cancelación", value: prestamo.observacionCancelacion, icon: "bi-x-circle", danger: true });
+    if (prestamo.fechaCancelacion) {
+      infoItems.push({ label: "Fecha Cancelación", value: new Date(prestamo.fechaCancelacion).toLocaleDateString(), icon: "bi-calendar-x", danger: true });
+    }
+  }
+  if (prestamo.estado === "desactivado" && prestamo.observacionDesactivacion) {
+    infoItems.push({ label: "Observación Desactivación", value: prestamo.observacionDesactivacion, icon: "bi-pause-circle", danger: true });
+  }
+
   const clientItems = [
     { label: "Cliente", value: prestamo.cliente?.nombre, icon: "bi-person", isBadge: true, badgeVariant: "success" },
     { label: "DNI", value: prestamo.cliente?.dni, icon: "bi-card-text" },

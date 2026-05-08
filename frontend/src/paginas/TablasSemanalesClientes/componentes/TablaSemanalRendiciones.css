@@ -1,0 +1,68 @@
+.tabla-semanal-rendiciones {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.section-title {
+  color: #1e293b;
+  font-weight: 600;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 0.75rem;
+}
+
+.rendiciones-table {
+  margin-bottom: 0;
+}
+
+.rendiciones-table thead th {
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-weight: 700;
+  border-top: none;
+  padding: 1rem;
+}
+
+.rendiciones-table tbody td {
+  padding: 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.date-main {
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.w-fit {
+  width: fit-content;
+}
+
+.rendiciones-table tr:hover {
+  background-color: #f8fafc !important;
+}
+
+.text-success {
+  color: #10b981 !important;
+}
+
+.badge.bg-success {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+.badge.bg-warning {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+.badge.bg-info {
+  background-color: #e0f2fe !important;
+  color: #075985 !important;
+}

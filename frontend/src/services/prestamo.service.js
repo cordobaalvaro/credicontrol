@@ -49,8 +49,13 @@ export const prestamoService = {
   },
 
   
-  desactivarPrestamo: async (id) => {
-    const response = await clientAxios.put(`/prestamos/${id}/desactivar`, {});
+  desactivarPrestamo: async (id, datos) => {
+    const response = await clientAxios.put(`/prestamos/${id}/desactivar`, datos);
+    return response.data;
+  },
+
+  cancelarPrestamo: async (id, datos) => {
+    const response = await clientAxios.put(`/prestamos/${id}/cancelar`, datos);
     return response.data;
   },
 

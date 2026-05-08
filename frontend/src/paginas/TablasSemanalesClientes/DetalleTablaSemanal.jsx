@@ -7,6 +7,7 @@ import "./DetalleTablaSemanal.css"
 import PageLoading from "../../componentes/ui/PageLoading"
 import TablaSemanalInfoSection from "./componentes/TablaSemanalInfoSection"
 import TablaSemanalItemsList from "./componentes/TablaSemanalItemsList"
+import TablaSemanalRendiciones from "./componentes/TablaSemanalRendiciones"
 import ModalAgregarItem from "./modales/ModalAgregarItem"
 import ModalTrasladoItems from "./modales/ModalTrasladoItems"
 import { useDetalleTablaSemanal } from "../../hooks/useDetalleTablaSemanal"
@@ -59,7 +60,9 @@ const DetalleTablaSemanal = () => {
     handleListoTraslado,
     handleEliminarSeleccionados,
     handleTrasladoCompleto,
-    handleActualizarTablas
+    handleActualizarTablas,
+    handleRendirJornada,
+    handleCargarRendicion
   } = useDetalleTablaSemanal(id)
   const handleDescargarPDF = () => reporteTablaSemanal(id)
   const handleDescargarPlanilla = () => reportePlanillaCobrador(id)
@@ -74,9 +77,16 @@ const DetalleTablaSemanal = () => {
               <span className="d-none d-md-inline">Detalles de la Tabla Semanal </span>
               {tablaLocal?.numeroTabla && <span className="text-success fw-bold">#{tablaLocal.numeroTabla}</span>}
               {tablaLocal?.cobrador && (
-                <span className="badge detalle-tabla-cobrador-badge px-3 py-2 ms-2">
-                  {tablaLocal.cobrador.nombre || tablaLocal.cobrador.email}
-                </span>
+                <>
+                  <span className="badge detalle-tabla-cobrador-badge px-3 py-2 ms-2">
+                    {tablaLocal.cobrador.nombre || tablaLocal.cobrador.email}
+                  </span>
+                  {tablaLocal.zonas && tablaLocal.zonas.length > 0 && (
+                    <span className="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 ms-2">
+                      {tablaLocal.zonas.map(z => z.nombre || z).join(", ")}
+                    </span>
+                  )}
+                </>
               )}
             </h5>
           </div>
@@ -114,6 +124,18 @@ const DetalleTablaSemanal = () => {
               <Button variant="danger" size="sm" onClick={handleToggleEliminacion} className="modal-header-button btn-eliminar">
                 <span className="btn-icon"><IconTrash size={14} /></span>
                 <span className="btn-text d-none d-md-inline ms-1">Cancelar</span>
+              </Button>
+            )}
+            {modoCobrador && tablaLocal?.estado === "enviada" && (
+              <Button
+                variant="info"
+                size="sm"
+                onClick={handleRendirJornada}
+                disabled={saving}
+                className="modal-header-button btn-rendir"
+              >
+                {saving ? <Spinner animation="border" size="sm" className="me-2" /> : <IconCheck size={14} />}
+                <span className="btn-text d-none d-md-inline ms-1">Rendir Jornada</span>
               </Button>
             )}
             {!modoCobrador && !modoEdicionAdmin && !modoTraslado && !modoEliminacion && (
@@ -178,6 +200,12 @@ const DetalleTablaSemanal = () => {
             loadingPlanes={loadingPlanes}
             montosEsperados={montosEsperados}
             onMontoEsperadoChange={handleMontoEsperadoChange}
+          />
+          <TablaSemanalRendiciones
+            rendiciones={tablaLocal?.rendiciones}
+            onCargarRendicion={handleCargarRendicion}
+            modoCobrador={modoCobrador}
+            saving={saving}
           />
         </div>
         <div className="modal-detalles-footer d-flex align-items-center gap-2">

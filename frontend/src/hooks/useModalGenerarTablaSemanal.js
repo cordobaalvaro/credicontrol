@@ -21,11 +21,24 @@ export const addDaysYmd = (yyyyMmDd, days) => {
 const useModalGenerarTablaSemanal = ({ show, onHide, onTablaCreada }) => {
     const [cobradores, setCobradores] = useState([])
     const [cobradorId, setCobradorId] = useState("")
+    const [zonas, setZonas] = useState([])
+    const [zonaId, setZonaId] = useState("")
     const [fechaInicio, setFechaInicio] = useState("")
     const [fechaFin, setFechaFin] = useState("")
     const [loadingCobradores, setLoadingCobradores] = useState(false)
+    const [loadingZonas, setLoadingZonas] = useState(false)
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState("")
+
+    // Nuevas opciones
+    const [tipoCuotas, setTipoCuotas] = useState("todas") // 'semana' | 'todas'
+    const [tipoZona, setTipoZona] = useState("especifica") // 'especifica' | 'todas'
+    const [esperadoModo, setEsperadoModo] = useState("automatico") // 'automatico' | 'manual'
+    const [montoEsperadoManual, setMontoEsperadoManual] = useState("")
+    const [previewData, setPreviewData] = useState(null)
+    const [loadingPreview, setLoadingPreview] = useState(false)
+    const [previewError, setPreviewError] = useState("")
+
     const fetchCobradores = async () => {
         try {
             setLoadingCobradores(true)
@@ -37,23 +50,94 @@ const useModalGenerarTablaSemanal = ({ show, onHide, onTablaCreada }) => {
             setLoadingCobradores(false)
         }
     }
+
+    const fetchZonasCobrador = async (id) => {
+        if (!id) {
+            setZonas([])
+            return
+        }
+        try {
+            setLoadingZonas(true)
+            const response = await usuarioService.getUsuarioById(id)
+            setZonas(Array.isArray(response.data?.zonaACargo) ? response.data.zonaACargo : [])
+        } catch (err) {
+            console.error("Error al obtener zonas del cobrador", err)
+            setZonas([])
+        } finally {
+            setLoadingZonas(false)
+        }
+    }
+
     useEffect(() => {
         if (show) {
             setError("")
             fetchCobradores()
         }
     }, [show])
+
+    useEffect(() => {
+        setZonaId("")
+        fetchZonasCobrador(cobradorId)
+    }, [cobradorId])
+
+    useEffect(() => {
+        const canPreview = cobradorId && fechaInicio && fechaFin && (tipoZona === "todas" || zonaId);
+        
+        if (canPreview) {
+            const fetchPreview = async () => {
+                try {
+                    setLoadingPreview(true)
+                    setPreviewError("")
+                    const res = await tablaSemanalService.previsualizarTotales({
+                        cobradorId,
+                        zonaId: tipoZona === "especifica" ? zonaId : null,
+                        fechaInicio,
+                        fechaFin,
+                        soloCuotasSemana: tipoCuotas === "semana"
+                    })
+                    if (res?.data) {
+                        setPreviewData(res.data)
+                    } else {
+                        setPreviewData(null)
+                        setPreviewError(res?.msg || "No hay datos para esta selección")
+                    }
+                } catch (err) {
+                    console.error("Error al previsualizar", err)
+                    setPreviewError(err?.response?.data?.msg || "Error al calcular totales")
+                    setPreviewData(null)
+                } finally {
+                    setLoadingPreview(false)
+                }
+            }
+            fetchPreview()
+        } else {
+            setPreviewData(null)
+            setPreviewError("")
+        }
+    }, [cobradorId, zonaId, tipoZona, fechaInicio, fechaFin, tipoCuotas])
+
     const resetForm = () => {
         setCobradorId("")
+        setZonaId("")
+        setZonas([])
         setFechaInicio("")
         setFechaFin("")
         setError("")
+        setTipoCuotas("todas")
+        setTipoZona("especifica")
+        setEsperadoModo("automatico")
+        setMontoEsperadoManual("")
+        setPreviewData(null)
+        setLoadingPreview(false)
+        setPreviewError("")
     }
+
     const handleClose = () => {
         if (saving) return
         resetForm()
         onHide?.()
     }
+
     const handleFechaInicioChange = (e) => {
         const value = e.target.value
         setFechaInicio(value)
@@ -69,13 +153,26 @@ const useModalGenerarTablaSemanal = ({ show, onHide, onTablaCreada }) => {
         setError("")
         setFechaFin(addDaysYmd(value, 6))
     }
+
     const handleSubmit = async (e) => {
         e?.preventDefault?.()
         
+        if (tipoZona === "especifica" && !zonaId) {
+            setError("Debes seleccionar una zona");
+            return;
+        }
+
+        if (esperadoModo === "manual" && (!montoEsperadoManual || Number.isNaN(Number(montoEsperadoManual)))) {
+            setError("Debes ingresar un monto esperado válido");
+            return;
+        }
+
         const errorValidacion = validarGeneracionTablaSemanal(
             cobradorId, 
+            zonaId,
             fechaInicio, 
-            fechaFin
+            fechaFin,
+            tipoZona === "todas"
         );
         
         if (errorValidacion) {
@@ -88,8 +185,11 @@ const useModalGenerarTablaSemanal = ({ show, onHide, onTablaCreada }) => {
             setError("")
             const body = {
                 cobradorId,
+                zonaId: tipoZona === "especifica" ? zonaId : null,
                 fechaInicio,
                 fechaFin,
+                soloCuotasSemana: tipoCuotas === "semana",
+                montoEsperadoManual: esperadoModo === "manual" ? Number(montoEsperadoManual) : null
             }
             const response = await tablaSemanalService.generarTabla(body)
             if (response?.data) {
@@ -122,18 +222,34 @@ const useModalGenerarTablaSemanal = ({ show, onHide, onTablaCreada }) => {
             setSaving(false)
         }
     }
+
     return {
         cobradores,
         cobradorId,
         setCobradorId,
+        zonas,
+        zonaId,
+        setZonaId,
         fechaInicio,
         fechaFin,
         loadingCobradores,
+        loadingZonas,
         saving,
         error,
         handleClose,
         handleFechaInicioChange,
-        handleSubmit
+        handleSubmit,
+        tipoCuotas,
+        setTipoCuotas,
+        tipoZona,
+        setTipoZona,
+        esperadoModo,
+        setEsperadoModo,
+        montoEsperadoManual,
+        setMontoEsperadoManual,
+        previewData,
+        loadingPreview,
+        previewError
     }
 }
 export default useModalGenerarTablaSemanal

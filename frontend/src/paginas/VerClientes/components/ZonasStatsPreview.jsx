@@ -21,20 +21,7 @@ const ZonasStatsPreview = ({ title, subtitle, icon: Icon, stats, children, class
         </div>
       </Card.Header>
       <Card.Body className="pt-0">
-        <div className="stats-preview-grid mb-3">
-          <div className="stats-preview-item primary">
-            <span className="stats-preview-value">
-              ${stats.cantidadACobrar?.toLocaleString() || 0}
-            </span>
-            <span className="stats-preview-label">A Cobrar</span>
-          </div>
-          <div className="stats-preview-item danger">
-            <span className="stats-preview-value">
-              ${stats.totalVencido?.toLocaleString() || 0}
-            </span>
-            <span className="stats-preview-label">Vencido</span>
-          </div>
-        </div>
+
         <div className="stats-preview-grid-mini">
           <div className="stats-preview-item-mini">
             <span className="stats-preview-value-mini">{stats.totalClientes || 0}</span>

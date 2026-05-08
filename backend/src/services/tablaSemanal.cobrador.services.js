@@ -134,9 +134,60 @@ const guardarTablaSemanalMontos = async (cobradorId, tablaId, itemsMontos) => {
   }
 }
 
+const rendirJornadaCobrador = async (cobradorId, tablaId, observaciones = "") => {
+  try {
+    const tabla = await TablaSemanalClientesModel.findOne({
+      _id: tablaId,
+      cobrador: cobradorId,
+      estado: "enviada",
+    })
+
+    if (!tabla) {
+      return { status: 404, msg: "Tabla semanal no encontrada o no está en estado para rendir", data: null }
+    }
+
+    const itemsConMonto = tabla.items.filter((it) => (it.montoCobrado || 0) > 0)
+    if (itemsConMonto.length === 0) {
+      return { status: 400, msg: "No hay cobros registrados para rendir en esta jornada", data: null }
+    }
+
+    const nuevaRendicion = {
+      fechaRendicion: new Date(),
+      estado: "reportada",
+      observaciones,
+      items: itemsConMonto.map((it) => ({
+        prestamo: it.prestamo,
+        cliente: it.cliente,
+        montoCobrado: it.montoCobrado,
+        itemIdOriginal: it._id,
+      })),
+    }
+
+    if (!tabla.rendiciones) tabla.rendiciones = []
+    tabla.rendiciones.push(nuevaRendicion)
+
+    // Resetear montos en la tabla principal para que el cobrador pueda seguir cobrando
+    tabla.items.forEach((it) => {
+      if ((it.montoCobrado || 0) > 0) {
+        it.montoCobrado = 0
+        it.estado = "enviado"
+      }
+    })
+
+    await recalcularTotales(tabla)
+    await tabla.save()
+
+    const tablaPopulada = await populateTabla(TablaSemanalClientesModel.findById(tablaId))
+    return { status: 200, msg: "Jornada rendida correctamente. Los cobros han sido enviados al administrador.", data: tablaPopulada }
+  } catch (error) {
+    return { status: 500, msg: "Error al rendir la jornada: " + error.message, data: null }
+  }
+}
+
 module.exports = {
   guardarMontoItemTablaSemanalCobrador,
   obtenerUltimaTablaSemanalCobrador,
   obtenerMisTablasSemanalCobrador,
   guardarTablaSemanalMontos,
+  rendirJornadaCobrador,
 }

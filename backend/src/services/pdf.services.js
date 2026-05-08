@@ -129,6 +129,7 @@ const obtenerReporteCobrosPrestamosPDFBD = async (prestamoId) => {
       montoCuota: prestamo.montoCuota || (prestamo.planDeCuotas && prestamo.planDeCuotas.length > 0 ? prestamo.planDeCuotas[0].monto : null),
       saldoPendiente: prestamo.saldoPendiente || 0,
       cantidadCuotas: prestamo.cantidadCuotas || 0,
+      fechaVencimiento: prestamo.fechaVencimiento,
       tipoPrestamo: prestamo.tipoPrestamo || "DIARIO",
       cliente: {
         nombre: prestamo.cliente?.nombre || "N/A",

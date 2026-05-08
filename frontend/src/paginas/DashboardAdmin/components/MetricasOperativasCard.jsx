@@ -15,8 +15,10 @@ const MetricasOperativasCard = ({ dashboardData, onShowZonas, onShowCobradores }
       </Card.Header>
       <Card.Body className="pt-0 px-4 pb-4">
         <Row className="g-3">
-          <Col xs={6} md={3}>
-            <div className="text-center p-3 rounded-3 metricas-card">
+          <Col xs={6} md={2}>
+            <div
+              className="text-center p-3 rounded-3 metricas-card"
+            >
               <div className="h4 mb-1 fw-bold">{dashboardData?.metricasFinancieras?.totalClientes || 0}</div>
               <div className="small text-muted">Total Clientes</div>
             </div>
@@ -29,7 +31,7 @@ const MetricasOperativasCard = ({ dashboardData, onShowZonas, onShowCobradores }
               <div className="small text-muted">Total Préstamos</div>
             </div>
           </Col>
-          <Col xs={6} md={3}>
+          <Col xs={6} md={2}>
             <div
               className="text-center p-3 rounded-3 metricas-card-clickable"
               onClick={onShowZonas}
@@ -45,6 +47,16 @@ const MetricasOperativasCard = ({ dashboardData, onShowZonas, onShowCobradores }
             >
               <div className="h4 mb-1 fw-bold">{dashboardData?.metricasOperativas?.totalCobradores || 0}</div>
               <div className="small text-muted">Total Cobradores</div>
+            </div>
+          </Col>
+          <Col xs={12} md={2}>
+            <div
+              className={`text-center p-3 rounded-3 ${dashboardData?.metricasOperativas?.rendicionesPendientes > 0 ? "metricas-card-active shadow-sm" : "metricas-card"}`}
+            >
+              <div className={`h4 mb-1 fw-bold ${dashboardData?.metricasOperativas?.rendicionesPendientes > 0 ? "text-primary" : ""}`}>
+                {dashboardData?.metricasOperativas?.rendicionesPendientes || 0}
+              </div>
+              <div className="small text-muted">Rendiciones Hoy</div>
             </div>
           </Col>
         </Row>

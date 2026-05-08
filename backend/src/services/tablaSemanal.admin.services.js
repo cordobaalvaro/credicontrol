@@ -8,102 +8,151 @@ const { populateTabla, recalcularTotales, procesarActualizacionMontos } = requir
 const { obtenerPlanDeCuotasPrestamo } = require("./tablaSemanal.shared.services")
 const mongoose = require("mongoose")
 
-const generarTablaSemanalAdmin = async ({ cobradorId, fechaInicio, fechaFin, adminId }) => {
+const calcularDatosTablaSemanal = async ({ 
+  cobradorId, 
+  zonaId, 
+  fechaInicio, 
+  fechaFin, 
+  soloCuotasSemana = false 
+}) => {
+  // Usamos strings YYYY-MM-DD para evitar problemas de zona horaria
+  const startStr = new Date(fechaInicio).toISOString().split('T')[0]
+  const endStr = new Date(fechaFin).toISOString().split('T')[0]
+
+  let zonaIds = []
+  if (zonaId) {
+    zonaIds = [zonaId]
+  } else {
+    const usuario = await UsuarioModel.findById(cobradorId).populate("zonaACargo")
+    if (!usuario || !usuario.zonaACargo || usuario.zonaACargo.length === 0) {
+      throw new Error("El cobrador no tiene zonas asignadas")
+    }
+    zonaIds = usuario.zonaACargo.map(z => z._id)
+  }
+
+  const clientesZona = await ClienteModel.find(
+    { zona: { $in: zonaIds }, estado: "activo" },
+    { _id: 1, zona: 1 },
+  )
+
+  if (!clientesZona || clientesZona.length === 0) {
+    throw new Error("No hay clientes activos en las zonas seleccionadas")
+  }
+
+  const clienteIds = clientesZona.map((c) => c._id)
+  const clienteZonaMap = new Map(clientesZona.map((c) => [String(c._id), c.zona]))
+
+  const prestamos = await PrestamoModel.find({
+    cliente: { $in: clienteIds },
+    estado: { $in: ["activo", "vencido"] },
+  }).select("cliente estado planDeCuotas montoTotal saldoPendiente saldoPendienteVencimiento")
+
+  const items = []
+  let totalActivos = 0
+  let totalVencidos = 0
+
+  for (const prestamo of prestamos) {
+    const zonaItem = clienteZonaMap.get(String(prestamo.cliente))
+    if (!zonaItem) continue
+
+    // Cuotas que caen DENTRO del periodo semanal (pendientes o cobradas en rango)
+    const cuotasEnSemana = (prestamo.planDeCuotas || []).filter(c => {
+      const fvStr = new Date(c.fechaVencimiento).toISOString().split('T')[0]
+      return fvStr >= startStr && fvStr <= endStr && (c.estado === "pendiente" || c.estado === "cobrado")
+    })
+
+    // Cuotas atrasadas: pendientes cuyo vencimiento es ANTES de la semana
+    const cuotasAtrasadas = (prestamo.planDeCuotas || []).filter(c => {
+      const fvStr = new Date(c.fechaVencimiento).toISOString().split('T')[0]
+      return fvStr < startStr && c.estado === "pendiente"
+    })
+
+    // monto estrictamente de la semana (solo cuotas pendientes en rango)
+    const montoSemana = cuotasEnSemana
+      .filter(c => c.estado === "pendiente")
+      .reduce((sum, c) => sum + ((c.monto || 0) - (c.pagado || 0)), 0)
+
+    const montoAtrasado = cuotasAtrasadas
+      .reduce((sum, c) => sum + ((c.monto || 0) - (c.pagado || 0)), 0)
+
+    // Si no hay nada (ni en la semana ni atrasado), no lo incluimos en la tabla
+    if (montoSemana <= 0 && montoAtrasado <= 0) continue
+
+    // El esperado del item = atraso + semana (para que el cobrador vea el total a cobrar)
+    const montoCuotasEsperadoSemana = montoAtrasado + montoSemana
+
+    // Los totales de la tabla: activos = solo semana, vencidos = solo atrasados
+    totalVencidos += montoAtrasado
+    totalActivos += montoSemana
+
+    // IMPORTANTE: cuotasSemana guardado en el item son SOLO las de la semana,
+    // así recalcularTotales puede filtrar correctamente por fecha.
+    // Las cuotas atrasadas se reflejan en montoCuotasEsperadoSemana y deudaArrastrada.
+    const cuotasParaItem = soloCuotasSemana
+      ? cuotasEnSemana  // en modo "solo semana", si no hay ninguna buscamos la próxima pendiente
+      : cuotasEnSemana  // en ambos modos solo guardamos las de la semana
+
+    // Si en modo soloCuotasSemana no hay cuotas en el rango, usamos la próxima pendiente
+    const cuotasFinales = (soloCuotasSemana && cuotasParaItem.length === 0)
+      ? (() => {
+          const prox = (prestamo.planDeCuotas || []).find(c => c.estado === "pendiente")
+          return prox ? [prox] : []
+        })()
+      : cuotasParaItem
+
+    items.push({
+      prestamo: prestamo._id,
+      cliente: prestamo.cliente,
+      zona: zonaItem,
+      cobrador: cobradorId,
+      cuotasSemana: cuotasFinales.map((c) => ({
+        numero: c.numero,
+        fechaVencimiento: c.fechaVencimiento,
+        monto: (c.monto || 0) - (c.pagado || 0),
+      })),
+      montoCuotasEsperadoSemana,
+      montoTotalPrestamo: prestamo.montoTotal || 0,
+      saldoPendiente: (prestamo.saldoPendiente ?? prestamo.montoTotal) || 0,
+      saldoPendienteVencimiento: prestamo.saldoPendienteVencimiento ?? null,
+      montoCobrado: 0,
+      deudaArrastrada: 0,
+      estado: "pendiente",
+    })
+  }
+
+  return { 
+    items, 
+    zonaIds, 
+    inicio: new Date(fechaInicio), 
+    fin: new Date(fechaFin),
+    totales: {
+      totalActivos,
+      totalVencidos,
+      totalEsperado: totalActivos
+    }
+  }
+}
+
+const generarTablaSemanalAdmin = async ({ 
+  cobradorId, 
+  zonaId, 
+  fechaInicio, 
+  fechaFin, 
+  adminId,
+  soloCuotasSemana = false,
+  montoEsperadoManual = null
+}) => {
   try {
-    const inicio = new Date(`${fechaInicio}T00:00:00`)
-    const fin = new Date(`${fechaFin}T23:59:59`)
-
-    if (Number.isNaN(inicio.getTime()) || Number.isNaN(fin.getTime())) {
-      return { status: 400, msg: "Fechas inválidas para generar la tabla semanal", data: null }
-    }
-
-    if (inicio > fin) {
-      return { status: 400, msg: "La fecha de inicio no puede ser mayor que la fecha de fin", data: null }
-    }
-
-    if (inicio.getDay() !== 1) {
-      return { status: 400, msg: "La fecha de inicio debe ser un lunes", data: null }
-    }
-
-    const finEsperado = new Date(inicio)
-    finEsperado.setDate(finEsperado.getDate() + 6)
-    finEsperado.setHours(23, 59, 59, 999)
-    if (
-      fin.getFullYear() !== finEsperado.getFullYear() ||
-      fin.getMonth() !== finEsperado.getMonth() ||
-      fin.getDate() !== finEsperado.getDate()
-    ) {
-      return { status: 400, msg: "El período debe ser semanal (7 días): lunes a domingo", data: null }
-    }
-
-    const zonasCobrador = await ZonaModel.find({ cobrador: cobradorId }, { _id: 1 })
-    if (!zonasCobrador || zonasCobrador.length === 0) {
-      return { status: 200, msg: "El cobrador no tiene zonas asignadas, no hay datos para generar la tabla", data: null }
-    }
-
-    const zonaIds = zonasCobrador.map((z) => z._id)
-    const clientesZona = await ClienteModel.find(
-      { zona: { $in: zonaIds }, estado: "activo" },
-      { _id: 1, zona: 1 },
-    )
-
-    if (!clientesZona || clientesZona.length === 0) {
-      return { status: 200, msg: "No hay clientes activos en las zonas del cobrador para el periodo seleccionado", data: null }
-    }
-
-    const clienteIds = clientesZona.map((c) => c._id)
-    const clienteZonaMap = new Map(clientesZona.map((c) => [String(c._id), c.zona]))
-
-    const prestamos = await PrestamoModel.find({
-      cliente: { $in: clienteIds },
-      estado: { $in: ["activo", "vencido"] },
-    }).select("cliente estado planDeCuotas montoTotal saldoPendiente saldoPendienteVencimiento")
-
-    const items = []
-
-    for (const prestamo of prestamos) {
-      const cuotasSemana = (prestamo.planDeCuotas || []).filter((cuota) => {
-        const fv = new Date(cuota.fechaVencimiento)
-        return fv >= inicio && fv <= fin && (cuota.estado === "pendiente" || cuota.estado === "cobrado")
-      })
-
-      // Siempre traemos los préstamos vencidos, aunque no tengan cuotas en esta semana
-      if (!cuotasSemana.length && prestamo.estado !== "vencido") continue
-
-      const zonaItem = clienteZonaMap.get(String(prestamo.cliente))
-      if (!zonaItem) continue
-
-      let montoCuotasEsperadoSemana
-      if (prestamo.estado === "vencido") {
-        montoCuotasEsperadoSemana = prestamo.saldoPendienteVencimiento || 0
-      } else {
-        montoCuotasEsperadoSemana = cuotasSemana.reduce((sum, c) => {
-          return sum + ((c.monto || 0) - (c.pagado || 0))
-        }, 0)
-      }
-
-      items.push({
-        prestamo: prestamo._id,
-        cliente: prestamo.cliente,
-        zona: zonaItem,
-        cobrador: cobradorId,
-        cuotasSemana: cuotasSemana.map((c) => ({
-          numero: c.numero,
-          fechaVencimiento: c.fechaVencimiento,
-          monto: (c.monto || 0) - (c.pagado || 0),
-        })),
-        montoCuotasEsperadoSemana,
-        montoTotalPrestamo: prestamo.montoTotal || 0,
-        saldoPendiente: (prestamo.saldoPendiente ?? prestamo.montoTotal) || 0,
-        saldoPendienteVencimiento: prestamo.saldoPendienteVencimiento ?? null,
-        montoCobrado: 0,
-        deudaArrastrada: 0,
-        estado: "pendiente",
-      })
-    }
+    const { items, zonaIds, inicio, fin } = await calcularDatosTablaSemanal({
+      cobradorId,
+      zonaId,
+      fechaInicio,
+      fechaFin,
+      soloCuotasSemana
+    })
 
     if (!items.length) {
-      return { status: 200, msg: "No hay cuotas que coincidan con el periodo semanal para las zonas del cobrador", data: null }
+      return { status: 200, msg: "No hay préstamos activos para generar la tabla", data: null }
     }
 
     const ultimaTablaCerrada = await TablaSemanalClientesModel.findOne({
@@ -129,29 +178,8 @@ const generarTablaSemanalAdmin = async ({ cobradorId, fechaInicio, fechaFin, adm
 
       for (const [prestamoIdStr, deuda] of deudaPorPrestamo) {
         const itemExistente = items.find((it) => String(it.prestamo) === prestamoIdStr)
-
         if (itemExistente) {
           itemExistente.deudaArrastrada = deuda
-        } else {
-          const itemAnterior = ultimaTablaCerrada.items.find(
-            (it) => String(it.prestamo) === prestamoIdStr,
-          )
-          if (itemAnterior) {
-            items.push({
-              prestamo: itemAnterior.prestamo,
-              cliente: itemAnterior.cliente,
-              zona: itemAnterior.zona,
-              cobrador: cobradorId,
-              cuotasSemana: [],
-              montoCuotasEsperadoSemana: 0,
-              montoTotalPrestamo: itemAnterior.montoTotalPrestamo || 0,
-              saldoPendiente: itemAnterior.saldoPendiente || 0,
-              saldoPendienteVencimiento: itemAnterior.saldoPendienteVencimiento ?? null,
-              montoCobrado: 0,
-              deudaArrastrada: deuda,
-              estado: "pendiente",
-            })
-          }
         }
       }
     }
@@ -168,12 +196,49 @@ const generarTablaSemanalAdmin = async ({ cobradorId, fechaInicio, fechaFin, adm
     })
 
     await recalcularTotales(tabla)
+
+    if (montoEsperadoManual !== null && !Number.isNaN(Number(montoEsperadoManual))) {
+      tabla.montoTotalEsperadoActivos = Number(montoEsperadoManual)
+      tabla.montoTotalEsperado = tabla.montoTotalEsperadoActivos
+    }
+
     await tabla.save()
 
     const tablaPopulada = await populateTabla(TablaSemanalClientesModel.findById(tabla._id))
     return { status: 201, msg: "Tabla semanal generada correctamente", data: tablaPopulada }
   } catch (error) {
-    return { status: 500, msg: "Error al generar la tabla semanal de clientes: " + error.message, data: null }
+    return { status: 500, msg: error.message, data: null }
+  }
+}
+
+const previsualizarTotalesTablaSemanalAdmin = async ({ 
+  cobradorId, 
+  zonaId, 
+  fechaInicio, 
+  fechaFin, 
+  soloCuotasSemana = false 
+}) => {
+  try {
+    const { items, totales } = await calcularDatosTablaSemanal({
+      cobradorId,
+      zonaId,
+      fechaInicio,
+      fechaFin,
+      soloCuotasSemana
+    })
+
+    return { 
+      status: 200, 
+      msg: "Previsualización obtenida", 
+      data: {
+        montoTotalEsperadoActivos: totales.totalActivos,
+        montoTotalEsperadoVencidos: totales.totalVencidos,
+        montoTotalEsperado: totales.totalEsperado,
+        cantidadItems: items.length
+      } 
+    }
+  } catch (error) {
+    return { status: 500, msg: error.message, data: null }
   }
 }
 
@@ -481,9 +546,69 @@ const abrirTablaSemanalAdmin = async (adminId, tablaId) => {
   }
 }
 
+const cargarRendicionAdmin = async (adminId, tablaId, rendicionId) => {
+  try {
+    const tabla = await TablaSemanalClientesModel.findById(tablaId)
+    if (!tabla) return { status: 404, msg: "Tabla semanal no encontrada", data: null }
+
+    const rendicion = tabla.rendiciones.id(rendicionId)
+    if (!rendicion) return { status: 404, msg: "Rendición no encontrada", data: null }
+    if (rendicion.estado === "cargada") return { status: 400, msg: "Esta rendición ya fue cargada", data: null }
+
+    const hoy = new Date()
+    const year = hoy.getFullYear()
+    const month = String(hoy.getMonth() + 1).padStart(2, "0")
+    const day = String(hoy.getDate()).padStart(2, "0")
+    const fechaPago = `${year}-${month}-${day}`
+
+    let procesadosCount = 0
+    let errores = []
+
+    for (const item of rendicion.items) {
+      try {
+        const resultadoCobro = await procesarCobroBD(item.prestamo, item.montoCobrado, adminId, fechaPago, null)
+        if (resultadoCobro.status === 200 || resultadoCobro.status === 201) {
+          procesadosCount++
+        } else {
+          errores.push(`Error en préstamo ${item.prestamo}: ${resultadoCobro.msg}`)
+        }
+      } catch (err) {
+        errores.push(`Error en préstamo ${item.prestamo}: ${err.message}`)
+      }
+    }
+
+    rendicion.estado = "cargada"
+    rendicion.fechaCargada = new Date()
+    rendicion.cargadoPor = adminId
+
+    await tabla.save()
+    const tablaPopulada = await populateTabla(TablaSemanalClientesModel.findById(tablaId))
+
+    return {
+      status: 200,
+      msg: `Se procesaron ${procesadosCount} cobros correctamente.${errores.length ? " Hubo algunos errores." : ""}`,
+      data: tablaPopulada,
+      errores: errores.length > 0 ? errores : null,
+    }
+  } catch (error) {
+    return { status: 500, msg: "Error al cargar la rendición: " + error.message, data: null }
+  }
+}
+
 module.exports = {
-  generarTablaSemanalAdmin, cargarItemTablaSemanalAdmin, eliminarTablaSemanalAdmin,
-  obtenerTodasLasTablasSemanalAdmin, enviarTablaSemanalACobrador, editarMontosTablaSemanalAdmin,
-  traerPrestamosCobradores, agregarItemTablaAdmin, eliminarItemAdmin, trasladarItems,
-  modificarEsperado, obtenerUltimaTablaSemanalGeneral, abrirTablaSemanalAdmin,
+  generarTablaSemanalAdmin, 
+  previsualizarTotalesTablaSemanalAdmin,
+  cargarItemTablaSemanalAdmin, 
+  eliminarTablaSemanalAdmin,
+  obtenerTodasLasTablasSemanalAdmin, 
+  enviarTablaSemanalACobrador, 
+  editarMontosTablaSemanalAdmin,
+  traerPrestamosCobradores, 
+  agregarItemTablaAdmin, 
+  eliminarItemAdmin, 
+  trasladarItems,
+  modificarEsperado, 
+  obtenerUltimaTablaSemanalGeneral, 
+  abrirTablaSemanalAdmin,
+  cargarRendicionAdmin,
 }

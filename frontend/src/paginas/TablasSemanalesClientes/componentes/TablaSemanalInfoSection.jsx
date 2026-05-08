@@ -22,6 +22,7 @@ const TablaSemanalInfoSection = ({ tabla }) => {
       icon: IconUser,
       label: "Cobrador",
       value: cobradorNombre,
+      suffix: tabla.zonas?.length > 0 ? ` (${tabla.zonas.map(z => z.nombre || z).join(", ")})` : "",
       variant: "primary",
     },
     {

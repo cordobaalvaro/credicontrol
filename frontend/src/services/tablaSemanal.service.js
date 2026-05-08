@@ -67,6 +67,11 @@ export const tablaSemanalService = {
     return response.data;
   },
 
+  previsualizarTotales: async (datos) => {
+    const response = await clientAxios.post("/tablas-semanal/previsualizar", datos);
+    return response.data;
+  },
+
   
   enviarTabla: async (id) => {
     const response = await clientAxios.post(`/tablas-semanal/${id}/enviar`, {});
@@ -165,6 +170,16 @@ export const tablaSemanalService = {
       `/tablas-semanal/${tablaOrigenId}/trasladar-items`,
       datos
     );
+    return response.data;
+  },
+
+  rendirJornada: async (id, observaciones = "") => {
+    const response = await clientAxios.post(`/tablas-semanal/${id}/rendir-jornada`, { observaciones });
+    return response.data;
+  },
+
+  cargarRendicion: async (id, rendicionId) => {
+    const response = await clientAxios.put(`/tablas-semanal/${id}/rendicion/${rendicionId}/cargar`, {});
     return response.data;
   }
 };

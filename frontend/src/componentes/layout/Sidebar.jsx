@@ -53,7 +53,6 @@ const Sidebar = () => {
     { path: "/todos-los-clientes", icon: "bi-people", label: "Clientes" },
     { path: "/todos-los-prestamos", icon: "bi-cash-coin", label: "Préstamos" },
     { path: "/tablas-semanales-clientes", icon: "bi-calendar-week", label: "Tablas" },
-    { path: "/gastos", icon: "bi-wallet2", label: "Gastos" },
     { path: "/planes", icon: "bi-grid-3x3", label: "Planes" },
   ]
   const cobradorNavItems = [
@@ -145,7 +144,7 @@ const Sidebar = () => {
       document.body,
     )
   }
-  
+
   return (
     <>
       <div className="sidebar-moderna">

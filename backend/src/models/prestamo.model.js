@@ -104,6 +104,14 @@ const prestamoSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    observacionCancelacion: {
+      type: String,
+      default: null,
+    },
+    observacionDesactivacion: {
+      type: String,
+      default: null,
+    },
     cantidadCuotas: {
       type: Number,
       required: true,

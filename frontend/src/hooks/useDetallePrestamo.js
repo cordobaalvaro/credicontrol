@@ -250,21 +250,29 @@ const useDetallePrestamo = ({ id, navigate }) => {
   };
 
   const desactivarPrestamo = async (prestamoId) => {
-    const result = await Swal.fire({
+    const { value: observacion, isConfirmed } = await Swal.fire({
       icon: "warning",
-      title: "¿Estás seguro?",
+      title: "Desactivar préstamo",
       text: "¿Quieres desactivar este préstamo? Esta acción cambiará el estado del préstamo.",
+      input: "textarea",
+      inputLabel: "Observación (Obligatorio)",
+      inputPlaceholder: "Ingresa el motivo de la desactivación...",
       showCancelButton: true,
       confirmButtonText: "Sí, desactivar",
       cancelButtonText: "Cancelar",
       confirmButtonColor: "#dc3545",
       cancelButtonColor: "#6c757d",
+      inputValidator: (value) => {
+        if (!value || value.trim() === "") {
+          return "Debes ingresar una observación para desactivar el préstamo";
+        }
+      }
     });
-    if (!result.isConfirmed) return;
+    if (!isConfirmed) return;
     try {
       if (togglingPrestamo) return;
       setTogglingPrestamo(true);
-      await prestamoService.desactivarPrestamo(prestamoId);
+      await prestamoService.desactivarPrestamo(prestamoId, { observacion });
       Swal.fire({
         icon: "success",
         title: "¡Éxito!",
@@ -318,6 +326,53 @@ const useDetallePrestamo = ({ id, navigate }) => {
         title: "Error",
         text:
           error.response?.data?.message || "No se pudo activar el préstamo",
+        confirmButtonColor: "#198754",
+      });
+    } finally {
+      setTogglingPrestamo(false);
+    }
+  };
+
+  const cancelarPrestamo = async (prestamoId) => {
+    const { value: observacion, isConfirmed } = await Swal.fire({
+      icon: "warning",
+      title: "Cancelar préstamo manualmente",
+      text: "Esto marcará el préstamo como cancelado. Las cuotas no se modificarán, pero el préstamo dejará de generar intereses y saldos.",
+      input: "textarea",
+      inputLabel: "Observación de cancelación (Obligatorio)",
+      inputPlaceholder: "Ingresa el motivo por el que se cancela el préstamo...",
+      showCancelButton: true,
+      confirmButtonText: "Sí, cancelar",
+      cancelButtonText: "Volver",
+      confirmButtonColor: "#dc3545",
+      cancelButtonColor: "#6c757d",
+      inputValidator: (value) => {
+        if (!value || value.trim() === "") {
+          return "Debes ingresar una observación para cancelar el préstamo";
+        }
+      }
+    });
+
+    if (!isConfirmed) return;
+
+    try {
+      if (togglingPrestamo) return;
+      setTogglingPrestamo(true);
+      await prestamoService.cancelarPrestamo(prestamoId, { observacion });
+      Swal.fire({
+        icon: "success",
+        title: "¡Éxito!",
+        text: "Préstamo cancelado exitosamente",
+        confirmButtonColor: "#198754",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      await obtenerPrestamo();
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.message || "No se pudo cancelar el préstamo",
         confirmButtonColor: "#198754",
       });
     } finally {
@@ -546,6 +601,7 @@ const useDetallePrestamo = ({ id, navigate }) => {
     eliminarPrestamo,
     activarPrestamo,
     desactivarPrestamo,
+    cancelarPrestamo,
   };
 };
 

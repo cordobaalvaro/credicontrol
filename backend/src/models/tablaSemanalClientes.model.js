@@ -131,7 +131,27 @@ const tablaSemanalClientesSchema = new mongoose.Schema(
       type: [itemTablaSemanalSchema],
       default: [],
     },
-    
+    rendiciones: [
+      {
+        fechaRendicion: { type: Date, default: Date.now },
+        items: [
+          {
+            prestamo: { type: mongoose.Schema.Types.ObjectId, ref: "Prestamo" },
+            cliente: { type: mongoose.Schema.Types.ObjectId, ref: "Cliente" },
+            montoCobrado: { type: Number, required: true },
+            itemIdOriginal: { type: mongoose.Schema.Types.ObjectId },
+          },
+        ],
+        estado: {
+          type: String,
+          enum: ["reportada", "cargada"],
+          default: "reportada",
+        },
+        fechaCargada: { type: Date },
+        cargadoPor: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" },
+        observaciones: { type: String, default: "" },
+      },
+    ],
     creadoPor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Usuario",

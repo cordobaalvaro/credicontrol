@@ -34,6 +34,7 @@ const TablaSemanalItemsList = ({
     guardandoItemId,
     handleMontoChange,
     handleGuardarItemCobrador,
+    handleResetItem,
     handleCerrarTablaCobrador,
     handleCargarItem
   } = useTablaSemanalItemsList({
@@ -82,6 +83,7 @@ const TablaSemanalItemsList = ({
         onMontoChange={(valor) => handleMontoChange(it._id, valor)}
         showGuardarItem={puedeEditarCobrador && it.estado !== "cargado"}
         onGuardarItem={() => handleGuardarItemCobrador(it)}
+        onReset={() => handleResetItem(it)}
         guardandoItem={guardandoItemId === it._id}
         showCargar={!modoCobrador && tabla.estado === "cerrada" && it.estado !== "cargado"}
         onCargar={() => handleCargarItem(it)}

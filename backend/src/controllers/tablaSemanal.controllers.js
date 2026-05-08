@@ -1,5 +1,6 @@
 const {
   generarTablaSemanalAdmin,
+  previsualizarTotalesTablaSemanalAdmin,
   obtenerTodasLasTablasSemanalAdmin,
   obtenerTablaSemanal,
   enviarTablaSemanalACobrador,
@@ -19,16 +20,28 @@ const {
   obtenerUltimaTablaSemanalCobrador,
   obtenerUltimaTablaSemanalGeneral,
   abrirTablaSemanalAdmin,
+  rendirJornadaCobrador,
+  cargarRendicionAdmin,
 } = require("../services/tablaSemanal.services")
 
 const generarTablaSemanalCtrl = async (req, res) => {
   try {
-    const { cobradorId, fechaInicio, fechaFin } = req.body || {}
+    const { 
+      cobradorId, 
+      zonaId, 
+      fechaInicio, 
+      fechaFin, 
+      soloCuotasSemana, 
+      montoEsperadoManual 
+    } = req.body || {}
 
     const resultado = await generarTablaSemanalAdmin({
       cobradorId,
+      zonaId,
       fechaInicio,
       fechaFin,
+      soloCuotasSemana,
+      montoEsperadoManual,
       adminId: req.idUsuario,
     })
 
@@ -301,6 +314,30 @@ const modificarEsperadoCtrl = async (req, res) => {
   }
 }
 
+const previsualizarTotalesTablaSemanalCtrl = async (req, res) => {
+  try {
+    const { 
+      cobradorId, 
+      zonaId, 
+      fechaInicio, 
+      fechaFin, 
+      soloCuotasSemana 
+    } = req.body || {}
+
+    const resultado = await previsualizarTotalesTablaSemanalAdmin({
+      cobradorId,
+      zonaId,
+      fechaInicio,
+      fechaFin,
+      soloCuotasSemana,
+    })
+
+    return res.status(resultado.status).json(resultado)
+  } catch (error) {
+    return res.status(500).json({ status: 500, msg: error.message, data: null })
+  }
+}
+
 const obtenerUltimaTablaSemanalCobradorCtrl = async (req, res) => {
   try {
     const { cobradorId } = req.params
@@ -340,8 +377,44 @@ const abrirTablaAdminCtrl = async (req, res) => {
   }
 }
 
+const rendirJornadaCobradorCtrl = async (req, res) => {
+  try {
+    const cobradorId = req.idUsuario
+    const { id } = req.params
+    const { observaciones } = req.body || {}
+
+    const resultado = await rendirJornadaCobrador(cobradorId, id, observaciones)
+    return res.status(resultado.status).json({ msg: resultado.msg, data: resultado.data })
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Error inesperado al rendir la jornada",
+      error: error.message,
+    })
+  }
+}
+
+const cargarRendicionCtrl = async (req, res) => {
+  try {
+    const adminId = req.idUsuario
+    const { id, rendicionId } = req.params
+
+    const resultado = await cargarRendicionAdmin(adminId, id, rendicionId)
+    return res.status(resultado.status).json({
+      msg: resultado.msg,
+      data: resultado.data,
+      errores: resultado.errores,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Error inesperado al cargar la rendición",
+      error: error.message,
+    })
+  }
+}
+
 module.exports = {
   generarTablaSemanalCtrl,
+  previsualizarTotalesTablaSemanalCtrl,
   obtenerTablasSemanalAdminCtrl,
   obtenerTablaSemanalPorIdCtrl,
   enviarTablaSemanalCtrl,
@@ -361,4 +434,6 @@ module.exports = {
   modificarEsperadoCtrl,
   obtenerUltimaTablaSemanalCobradorCtrl,
   obtenerUltimaTablaSemanalGeneralCtrl,
+  rendirJornadaCobradorCtrl,
+  cargarRendicionCtrl,
 }

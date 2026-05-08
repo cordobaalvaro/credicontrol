@@ -7,6 +7,7 @@ const {
   actualizarPrestamoBD,
   desactivarPrestamoBD,
   activarPrestamoBD,
+  cancelarPrestamoBD,
 } = require("../services/prestamos.services");
 
 const crearPrestamo = async (req, res) => {
@@ -87,11 +88,27 @@ const actualizarPrestamo = async (req, res) => {
 const desactivarPrestamo = async (req, res) => {
   try {
     const id = req.params.id;
+    const { observacion } = req.body;
     if (!id) {
       return res.status(400).json({ msg: "ID es requerido", data: null });
     }
 
-    const { status, msg, data } = await desactivarPrestamoBD(id);
+    const { status, msg, data } = await desactivarPrestamoBD(id, observacion);
+    res.status(status).json({ msg, data });
+  } catch (error) {
+    res.status(500).json({ msg: error.message, data: null });
+  }
+};
+
+const cancelarPrestamo = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { observacion } = req.body;
+    if (!id) {
+      return res.status(400).json({ msg: "ID es requerido", data: null });
+    }
+
+    const { status, msg, data } = await cancelarPrestamoBD(id, observacion);
     res.status(status).json({ msg, data });
   } catch (error) {
     res.status(500).json({ msg: error.message, data: null });
@@ -121,4 +138,5 @@ module.exports = {
   actualizarPrestamo,
   desactivarPrestamo,
   activarPrestamo,
+  cancelarPrestamo,
 };

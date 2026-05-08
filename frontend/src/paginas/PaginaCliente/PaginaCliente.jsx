@@ -143,8 +143,7 @@ const PaginaCliente = () => {
               <div className="d-flex gap-2 justify-content-end align-items-center flex-wrap">
                 {(userRole === "admin" || userRole === "cobrador") && (
                   <ReporteResumenCliente
-                    datosResumen={resumenCliente}
-                    onRequestData={obtenerResumenCliente}
+                    clienteId={id}
                   />
                 )}
                 {userRole === "admin" && activeTab === "informacion" &&

@@ -33,13 +33,25 @@ const TablaSemanalCard = ({ tabla, onTablaActualizada, onTablaEliminada, onActua
               )}
               Semana del {formatearFecha(tabla.fechaInicio)} al {formatearFecha(tabla.fechaFin)}
             </Card.Title>
-            <Card.Subtitle className="text-muted small d-flex align-items-center gap-2">
-              <span className="tabla-semanal-cobrador-label">
-                Cobrador:
-              </span>
-              <span className="fw-medium tabla-semanal-cobrador-name">
-                {tabla.cobrador?.nombre || tabla.cobrador?.email || "Sin datos"}
-              </span>
+            <Card.Subtitle className="text-muted small d-flex flex-column gap-1">
+              <div className="d-flex align-items-center gap-2">
+                <span className="tabla-semanal-cobrador-label">
+                  Cobrador:
+                </span>
+                <span className="fw-medium tabla-semanal-cobrador-name">
+                  {tabla.cobrador?.nombre || tabla.cobrador?.email || "Sin datos"}
+                </span>
+              </div>
+              {tabla.zonas && tabla.zonas.length > 0 && (
+                <div className="d-flex align-items-center gap-2">
+                  <span className="tabla-semanal-zona-label">
+                    Zona(s):
+                  </span>
+                  <span className="fw-medium text-primary">
+                    {tabla.zonas.map(z => z.nombre || z).join(", ")}
+                  </span>
+                </div>
+              )}
             </Card.Subtitle>
           </div>
           <Badge className="px-3 py-1 tabla-semanal-badge" bg={estadoVariant}>

@@ -1,5 +1,6 @@
-import { Card, Button } from "react-bootstrap"
-import { IconMapPin, IconDeviceFloppy } from "@tabler/icons-react"
+import { useState } from "react"
+import { Card, Button, Spinner, Collapse } from "react-bootstrap"
+import { IconMapPin, IconDeviceFloppy, IconX, IconChevronDown, IconChevronUp } from "@tabler/icons-react"
 import { useNavigate } from "react-router-dom"
 import "./TablaListCard.css"
 
@@ -16,10 +17,13 @@ const TablaListCard = ({
     montosInline,
     handleMontoInlineChange,
     handleGuardarMontoInline,
+    onResetItem,
+    footerAction,
     savingInline,
     tablaId
 }) => {
     const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState(true);
 
     const handleNavigateToPrestamo = (prestamoId) => {
         if (prestamoId) {
@@ -28,8 +32,12 @@ const TablaListCard = ({
     };
 
     return (
-        <Card className={`border-0 shadow-sm tabla-list-card ${variant ? `tabla-list-card--${variant}` : ""}`}>
-            <Card.Header className="border-0 bg-transparent py-3">
+        <Card className={`border-0 shadow-sm tabla-list-card ${variant ? `tabla-list-card--${variant}` : ""} ${!isOpen ? 'collapsed' : ''}`}>
+            <Card.Header 
+                className="border-0 bg-transparent py-3 cursor-pointer d-flex flex-column"
+                onClick={() => setIsOpen(!isOpen)}
+                style={{ cursor: 'pointer' }}
+            >
                 <div className="d-flex align-items-center">
                     <div
                         className="me-3 tabla-list-iconbox"
@@ -44,8 +52,11 @@ const TablaListCard = ({
                             {count || 0} items
                         </small>
                     </div>
+                    <div className="text-muted">
+                        {isOpen ? <IconChevronUp size={20} /> : <IconChevronDown size={20} />}
+                    </div>
                 </div>
-                {montoTotal > 0 && (
+                {isOpen && montoTotal > 0 && (
                     <div className="mt-3 pt-3 border-top tabla-list-total">
                         <div className="text-center">
                             <div className="h5 mb-1 fw-bold tabla-list-total-value">
@@ -58,7 +69,9 @@ const TablaListCard = ({
                     </div>
                 )}
             </Card.Header>
-            <Card.Body className="pt-0">
+            <Collapse in={isOpen}>
+                <div>
+                    <Card.Body className="pt-0">
                 {items?.length > 0 ? (
                     <div className="tabla-list-scroll">
                         {items.map((item, index) => (
@@ -92,18 +105,30 @@ const TablaListCard = ({
                                         <input
                                             type="number"
                                             className="form-control form-control-sm tabla-list-inline-input"
-                                            value={montosInline[item.prestamo?._id] ?? item.montoCobrado ?? ""}
-                                            onChange={(e) => handleMontoInlineChange(item.prestamo?._id, e.target.value)}
+                                            value={item.prestamo && item.prestamo._id ? (montosInline[item.prestamo._id] ?? item.montoCobrado ?? "") : ""}
+                                            onChange={(e) => item.prestamo && item.prestamo._id && handleMontoInlineChange(item.prestamo._id, e.target.value)}
                                         />
                                         <Button
                                             size="sm"
-                                            variant="primary"
+                                            variant="outline-primary"
                                             className="p-1 d-flex align-items-center justify-content-center tabla-list-inline-btn"
-                                            disabled={!tablaId || !item.prestamo?._id || savingInline[item.prestamo?._id]}
-                                            onClick={() => handleGuardarMontoInline(item.prestamo?._id)}
+                                            disabled={!tablaId || !item.prestamo || !item.prestamo._id || savingInline[item.prestamo._id]}
+                                            onClick={() => item.prestamo && item.prestamo._id && handleGuardarMontoInline(item.prestamo._id)}
                                         >
-                                            <IconDeviceFloppy size={16} />
+                                            {item.prestamo && item.prestamo._id && savingInline[item.prestamo._id] ? <Spinner animation="border" size="sm" /> : <IconDeviceFloppy size={16} />}
                                         </Button>
+                                        {variant === "success" && onResetItem && (
+                                            <Button
+                                                size="sm"
+                                                variant="outline-danger"
+                                                className="p-1 d-flex align-items-center justify-content-center tabla-list-inline-btn"
+                                                disabled={!tablaId || !item.prestamo?._id || savingInline[item.prestamo?._id]}
+                                                onClick={() => onResetItem(item.prestamo?._id)}
+                                                title="Quitar de reportados"
+                                            >
+                                                <IconX size={16} />
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                                 <div 
@@ -144,7 +169,14 @@ const TablaListCard = ({
                         </small>
                     </div>
                 )}
+                {footerAction && (
+                    <div className="tabla-list-footer mt-3 pt-3 border-top">
+                        {footerAction}
+                    </div>
+                )}
             </Card.Body>
+                </div>
+            </Collapse>
         </Card>
     )
 }

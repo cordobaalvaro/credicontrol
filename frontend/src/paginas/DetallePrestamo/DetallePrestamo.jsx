@@ -57,6 +57,7 @@ const DetallePrestamo = () => {
     eliminarPrestamo,
     activarPrestamo,
     desactivarPrestamo,
+    cancelarPrestamo,
   } = useDetallePrestamo({ id, navigate });
   const { reporteRegistrosCobros, reporteDetallePrestamo } = useReportesPDF();
   const handleDescargarPDF = () => {
@@ -91,6 +92,7 @@ const DetallePrestamo = () => {
           onEliminar={eliminarPrestamo}
           onDesactivar={desactivarPrestamo}
           onActivar={activarPrestamo}
+          onCancelar={cancelarPrestamo}
           prestamoId={id}
         />
         <DetallePrestamoInfoCard

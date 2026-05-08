@@ -4,6 +4,7 @@ const auth = require("../middlewares/auth")
 
 const {
   generarTablaSemanalCtrl,
+  previsualizarTotalesTablaSemanalCtrl,
   obtenerTablasSemanalAdminCtrl,
   obtenerTablaSemanalPorIdCtrl,
   enviarTablaSemanalCtrl,
@@ -23,10 +24,13 @@ const {
   modificarEsperadoCtrl,
   obtenerUltimaTablaSemanalCobradorCtrl,
   obtenerUltimaTablaSemanalGeneralCtrl,
+  rendirJornadaCobradorCtrl,
+  cargarRendicionCtrl,
 } = require("../controllers/tablaSemanal.controllers")
 
 
 router.post("/generar", auth("admin"), generarTablaSemanalCtrl)
+router.post("/previsualizar", auth("admin"), previsualizarTotalesTablaSemanalCtrl)
 router.get("/prestamos", auth("admin"), traerPrestamosCobradoresCtrl)
 router.get("/", auth("admin"), obtenerTablasSemanalAdminCtrl)
 router.get("/:id", auth("admin", "cobrador"), obtenerTablaSemanalPorIdCtrl)
@@ -57,5 +61,8 @@ router.get("/prestamos/:prestamoId/plan-cuotas", auth("admin", "cobrador"), obte
 
 
 router.patch("/:tablaId/items/:itemId/modificar-esperado", auth("admin", "cobrador"), modificarEsperadoCtrl)
+
+router.post("/:id/rendir-jornada", auth("cobrador"), rendirJornadaCobradorCtrl)
+router.put("/:id/rendicion/:rendicionId/cargar", auth("admin"), cargarRendicionCtrl)
 
 module.exports = router

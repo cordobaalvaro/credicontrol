@@ -17,6 +17,8 @@ const BottomNav = () => {
     { path: "/dashboard", icon: "bi-speedometer2", label: "Dashboard" },
     { path: "/todos-los-clientes", icon: "bi-people", label: "Clientes" },
     { path: "/todos-los-prestamos", icon: "bi-cash-coin", label: "Préstamos" },
+    { path: "/tablas-semanales-clientes", icon: "bi-calendar-week", label: "Tablas" },
+    { path: "/planes", icon: "bi-grid-3x3", label: "Planes" },
   ]
   const cobradorNavItems = [
     { path: "/dashboard", icon: "bi-speedometer2", label: "Dashboard" },

@@ -10,9 +10,6 @@ import ModalCobradores from "./components/ModalCobradores"
 import ModalCrearZona from "./modales/ModalCrearZona"
 import ModalEditarZona from "./modales/ModalEditarZona"
 import UltimaTablaSemanalCard from "./components/UltimaTablaSemanalCard"
-import GraficoGananciasZonas from "./components/GraficoGananciasZonas"
-import GraficoGastosGanancias from "./components/GraficoGastosGanancias"
-import ResumenFinancieroCard from "./components/ResumenFinancieroCard"
 import MetricasOperativasCard from "./components/MetricasOperativasCard"
 import AlertasPrestamosCard from "./components/AlertasPrestamosCard"
 import CobradosMesModal from "./components/CobradosMesModal"
@@ -133,68 +130,20 @@ const DashboardAdmin = () => {
                 </>
               )}
             </Button>
-            <div className="d-flex gap-2 align-items-center flex-wrap justify-content-end">
-              <Form.Group className="d-flex align-items-center">
-                <Form.Label className="mb-0 me-2 fw-medium text-muted">Mes:</Form.Label>
-                <Form.Select
-                  size="sm"
-                  value={filtroMes}
-                  onChange={(e) => setFiltroMes(e.target.value)}
-                  className="dashboard-filtro-select"
-                >
-                  <option value="1">Enero</option>
-                  <option value="2">Febrero</option>
-                  <option value="3">Marzo</option>
-                  <option value="4">Abril</option>
-                  <option value="5">Mayo</option>
-                  <option value="6">Junio</option>
-                  <option value="7">Julio</option>
-                  <option value="8">Agosto</option>
-                  <option value="9">Septiembre</option>
-                  <option value="10">Octubre</option>
-                  <option value="11">Noviembre</option>
-                  <option value="12">Diciembre</option>
-                </Form.Select>
-              </Form.Group>
-              <Form.Group className="d-flex align-items-center">
-                <Form.Label className="mb-0 me-2 fw-medium text-muted">Año:</Form.Label>
-                <Form.Select
-                  size="sm"
-                  value={filtroAnio}
-                  onChange={(e) => setFiltroAnio(e.target.value)}
-                  className="dashboard-filtro-anio"
-                >
-                  {[...Array(5).keys()].map((i) => {
-                    const year = new Date().getFullYear() - i
-                    return (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    )
-                  })}
-                </Form.Select>
-              </Form.Group>
-            </div>
           </div>
         }
       />
       <Container fluid className="dashboard-container">
-        {}
-        <ResumenFinancieroCard
-          dashboardData={dashboardData}
-          onShowCobradosMes={() => setShowCobradosMesModal(true)}
-          onShowPrestadosMes={() => setShowPrestadosMesModal(true)}
-        />
-        <Row className="g-3 mb-4">
-          <Col md={6}><GraficoGananciasZonas filtroMes={filtroMes} filtroAnio={filtroAnio} /></Col>
-          <Col md={6}><GraficoGastosGanancias filtroMes={filtroMes} filtroAnio={filtroAnio} /></Col>
-        </Row>
+
         {}
         <MetricasOperativasCard
           dashboardData={dashboardData}
           onShowZonas={() => setShowZonasModal(true)}
           onShowCobradores={() => setShowCobradoresModal(true)}
         />
+
+        {}
+
         <Row className="g-3 mb-4">
           <Col md={6}>
             <AlertasPrestamosCard

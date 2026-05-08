@@ -15,9 +15,9 @@ const addDaysYmd = (yyyyMmDd, days) => {
   return `${y}-${m}-${day}`;
 };
 
-export const validarGeneracionTablaSemanal = (cobradorId, fechaInicio, fechaFin) => {
-  if (!cobradorId || !fechaInicio || !fechaFin) {
-    return "Debes seleccionar un cobrador y un rango de fechas";
+export const validarGeneracionTablaSemanal = (cobradorId, zonaId, fechaInicio, fechaFin, skipZonaCheck = false) => {
+  if (!cobradorId || (!zonaId && !skipZonaCheck) || !fechaInicio || !fechaFin) {
+    return "Debes completar todos los campos obligatorios";
   }
 
   if (!isMonday(fechaInicio)) {

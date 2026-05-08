@@ -141,10 +141,6 @@ const DocumentoRegistrosCobros = ({ prestamoData, registrosCobros, estadisticas 
           {prestamoData?.tipo === "refinanciado" ? "Información del Préstamo Refinanciado" : "Información del Préstamo"}
         </Text>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>NÂ° Préstamo:</Text>
-          <Text style={styles.infoValue}>{prestamoData?.numero || "N/A"}</Text>
-        </View>
-        <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Cliente:</Text>
           <Text style={styles.infoValue}>{prestamoData?.cliente?.nombre || "-"}</Text>
         </View>
@@ -152,21 +148,44 @@ const DocumentoRegistrosCobros = ({ prestamoData, registrosCobros, estadisticas 
           <Text style={styles.infoLabel}>DNI:</Text>
           <Text style={styles.infoValue}>{prestamoData?.cliente?.dni || "-"}</Text>
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>{prestamoData?.tipo === "refinanciado" ? "Última Deuda:" : "Monto Prestado:"}</Text>
-          <Text style={styles.infoValue}>{formatearMonto(prestamoData?.montoPrestado)}</Text>
-        </View>
+        
+        {prestamoData?.tipo !== "refinanciado" && (
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Monto Prestado:</Text>
+            <Text style={styles.infoValue}>{formatearMonto(prestamoData?.montoPrestado)}</Text>
+          </View>
+        )}
+
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Monto de Cuota:</Text>
           <Text style={styles.infoValue}>{formatearMonto(prestamoData?.montoCuota || prestamoData?.planDeCuotas?.[0]?.monto)}</Text>
         </View>
+
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>{prestamoData?.tipo === "refinanciado" ? "Monto Refinanciado:" : "Monto Total:"}</Text>
+          <Text style={styles.infoLabel}>
+            {prestamoData?.tipo === "refinanciado" ? "Monto a Pagar:" : "Monto Total:"}
+          </Text>
           <Text style={styles.infoValue}>{formatearMonto(prestamoData?.monto)}</Text>
         </View>
+
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Estado:</Text>
-          <Text style={styles.infoValue}>{prestamoData?.estado || "-"}</Text>
+          <Text style={styles.infoLabel}>Fecha de Vencimiento:</Text>
+          <Text style={styles.infoValue}>{formatearFecha(prestamoData?.fechaVencimiento)}</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Cantidad de Cuotas:</Text>
+          <Text style={styles.infoValue}>{prestamoData?.cantidadCuotas || "N/A"}</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Pagado:</Text>
+          <Text style={styles.infoValue}>{formatearMonto(estadisticas?.totalCobrado)}</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Saldo Pendiente:</Text>
+          <Text style={styles.infoValue}>{formatearMonto(estadisticas?.saldoPendienteActual)}</Text>
         </View>
       </View>
       {}

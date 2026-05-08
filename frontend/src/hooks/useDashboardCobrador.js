@@ -14,15 +14,24 @@ const useDashboardCobrador = () => {
   const [novedadesData, setNovedadesData] = useState(null)
   const [loadingZonas, setLoadingZonas] = useState(false)
   const [loadingNovedades, setLoadingNovedades] = useState(false)
-  const tablaId = dashboardData?.metricasDia?.ultimaTabla?._id
-  const fetchDashboardData = async (showLoading = true) => {
+  const [selectedTablaId, setSelectedTablaId] = useState(null)
+  const tablaId = selectedTablaId || dashboardData?.metricasDia?.ultimaTabla?._id
+
+  const fetchDashboardData = async (showLoading = true, customTablaId = null) => {
     try {
       if (showLoading) setLoading(true)
       setError("")
-      const response = await dashboardService.getCobradorDashboard()
+      
+      const idToUse = customTablaId || selectedTablaId
+      const response = await dashboardService.getCobradorDashboard(idToUse)
+      
       if (response) {
         setDashboardData(response.data)
         setLastUpdated(new Date())
+        // Si no tenemos una tabla seleccionada, tomamos la que vino por defecto (la última)
+        if (!idToUse && response.data?.metricasDia?.ultimaTabla?._id) {
+          setSelectedTablaId(response.data.metricasDia.ultimaTabla._id)
+        }
       } else {
         const errorMsg = response?.msg || "Error al cargar los datos"
         setError(errorMsg)
@@ -58,7 +67,7 @@ const useDashboardCobrador = () => {
     }
   }
   const refreshData = async (showLoading = true) => {
-    await fetchDashboardData(showLoading)
+    await fetchDashboardData(showLoading, selectedTablaId)
   }
   const fetchMetricasDia = async () => {
     try {
@@ -131,10 +140,10 @@ const useDashboardCobrador = () => {
   }
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchDashboardData(false) 
+      fetchDashboardData(false, selectedTablaId) 
     }, 5 * 60 * 1000) 
     return () => clearInterval(interval)
-  }, [])
+  }, [selectedTablaId])
   useEffect(() => {
     fetchDashboardData(true)
   }, [])
@@ -198,11 +207,44 @@ const useDashboardCobrador = () => {
         },
       ])
       await refreshData(false)
+      // Limpiar el monto local para que use el del servidor
+      setMontosInline(prev => {
+        const newMontos = { ...prev }
+        delete newMontos[prestamoId]
+        return newMontos
+      })
     } catch (err) {
       Swal.fire({
         icon: "error",
         title: "Error",
         text: err?.response?.data?.msg || err?.message || "Error al guardar",
+      })
+    } finally {
+      setSavingForPrestamo(prestamoId, false)
+    }
+  }
+  const handleResetItem = async (prestamoId) => {
+    if (!tablaId || !prestamoId) return
+    try {
+      setSavingForPrestamo(prestamoId, true)
+      await tablaSemanalService.actualizarMontosCobrador(tablaId, [
+        {
+          prestamoId,
+          montoCobrado: 0,
+        },
+      ])
+      await refreshData(false)
+      // Limpiar el monto local
+      setMontosInline(prev => {
+        const newMontos = { ...prev }
+        delete newMontos[prestamoId]
+        return newMontos
+      })
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: err?.response?.data?.msg || "Error al quitar item",
       })
     } finally {
       setSavingForPrestamo(prestamoId, false)
@@ -227,6 +269,55 @@ const useDashboardCobrador = () => {
         icon: "error",
         title: "Error",
         text: err?.response?.data?.msg || err?.message || "Error al cerrar la tabla",
+      })
+    }
+  }
+  const handleRendirJornada = async () => {
+    if (!tablaId) return
+    try {
+      const itemsReportados = dashboardData?.metricasDia?.itemsTabla?.reportados?.cantidad || 0
+      if (itemsReportados === 0) {
+        Swal.fire({
+          icon: "info",
+          title: "Sin cobros",
+          text: "No tienes cobros registrados para rendir hoy.",
+        })
+        return
+      }
+      const result = await Swal.fire({
+        title: "¿Rendir jornada?",
+        html: `
+          <div class="text-start">
+            <p class="mb-3">Se enviarán <b>${itemsReportados}</b> cobros al administrador y se limpiará la lista para mañana.</p>
+            <label for="swal-observaciones" class="form-label small text-muted">Notas / Observaciones (opcional):</label>
+            <textarea id="swal-observaciones" class="form-control form-control-sm" placeholder="Escribe aquí cualquier observación..." rows="3"></textarea>
+          </div>
+        `,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Sí, rendir jornada",
+        cancelButtonText: "Cancelar",
+        preConfirm: () => {
+          return document.getElementById('swal-observaciones').value
+        }
+      })
+      if (!result.isConfirmed) return
+      const observaciones = result.value
+      await tablaSemanalService.rendirJornada(tablaId, observaciones)
+      Swal.fire({
+        icon: "success",
+        title: "Jornada rendida",
+        text: "Los cobros han sido enviados correctamente.",
+        timer: 2000,
+        showConfirmButton: false,
+      })
+      await refreshData(false)
+      setMontosInline({}) // Limpiar todos los inputs locales al rendir jornada
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: err?.response?.data?.msg || "Error al rendir la jornada",
       })
     }
   }
@@ -266,6 +357,11 @@ const useDashboardCobrador = () => {
     }, 2 * 60 * 1000)
     return () => clearInterval(interval)
   }, [])
+  const handleSeleccionarTabla = async (id) => {
+    setSelectedTablaId(id)
+    await fetchDashboardData(true, id)
+  }
+
   return {
     dashboardData,
     loading,
@@ -288,9 +384,13 @@ const useDashboardCobrador = () => {
     loadingZonas,
     loadingNovedades,
     tablaId,
+    selectedTablaId,
+    handleSeleccionarTabla,
     handleMontoInlineChange,
     handleGuardarMontoInline,
+    handleResetItem,
     handleCerrarTablaInline,
+    handleRendirJornada,
     getDireccionCobroFinal,
     hasData: !!dashboardData,
     hasAlertas: dashboardData?.alertas?.totalAlertas > 0,

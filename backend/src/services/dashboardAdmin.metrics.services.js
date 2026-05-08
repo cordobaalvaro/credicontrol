@@ -80,7 +80,7 @@ const obtenerMetricasOperativas = async (mes, anio) => {
   try {
     const { fechaHace4Semanas, fechaHaceUnMes, hoyFiltro, mananaFiltro } = getFiltroFechas(mes, anio);
 
-    const [tablasSemanales, prestamosNuevosCancelados, cobrosHoy, cobradoresActivos] = await Promise.all([
+    const [tablasSemanales, prestamosNuevosCancelados, cobrosHoy, cobradoresActivos, rendicionesPendientes] = await Promise.all([
       TablaSemanalClientesModel.aggregate([
         { $match: { createdAt: { $gte: fechaHace4Semanas } } },
         {
@@ -129,6 +129,11 @@ const obtenerMetricasOperativas = async (mes, anio) => {
             cobradoresInactivos: { $sum: { $cond: ["$isActive", 0, 1] } }
           }
         }
+      ]),
+      TablaSemanalClientesModel.aggregate([
+        { $unwind: "$rendiciones" },
+        { $match: { "rendiciones.estado": "reportada" } },
+        { $group: { _id: null, totalPendientes: { $sum: 1 } } }
       ])
     ]);
 
@@ -141,7 +146,8 @@ const obtenerMetricasOperativas = async (mes, anio) => {
       cobradoresActivos: cobradoresActivos[0]?.cobradoresActivos || 0,
       cobradoresInactivos: cobradoresActivos[0]?.cobradoresInactivos || 0,
       cobrosHoy: cobrosHoy[0]?.totalCobros || 0,
-      montoCobrosHoy: cobrosHoy[0]?.montoTotal || 0
+      montoCobrosHoy: cobrosHoy[0]?.montoTotal || 0,
+      rendicionesPendientes: rendicionesPendientes[0]?.totalPendientes || 0
     };
   } catch (error) {
     console.error("Error al obtener métricas operativas:", error);

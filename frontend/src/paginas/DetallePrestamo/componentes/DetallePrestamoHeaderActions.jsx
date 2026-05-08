@@ -11,6 +11,7 @@ const DetallePrestamoHeaderActions = ({
   onEliminar,
   onDesactivar,
   onActivar,
+  onCancelar,
   prestamoId,
 }) => {
   const commonButtonClassName = "detalle-prestamo-btn-common"
@@ -74,6 +75,18 @@ const DetallePrestamoHeaderActions = ({
             </LoadingButton>
           )}
           {}
+          {prestamo && prestamo.estado !== "cancelado" && rol === "admin" && (
+            <LoadingButton
+              variant="dark"
+              onClick={() => onCancelar(prestamo._id)}
+              loading={togglingPrestamo}
+              className={`d-flex align-items-center ${commonButtonClassName} detalle-prestamo-btn--dark`}
+            >
+              <i className="bi bi-x-circle me-2 detalle-prestamo-icon"></i>
+              Cancelar
+            </LoadingButton>
+          )}
+          {}
           {rol === "admin" && (
             <LoadingButton
               variant="outline-danger"
@@ -131,6 +144,12 @@ const DetallePrestamoHeaderActions = ({
               <Dropdown.Item onClick={() => onActivar(prestamo._id)} className="d-flex align-items-center">
                 <i className="bi bi-lightning me-2 detalle-prestamo-icon"></i>
                 Activar
+              </Dropdown.Item>
+            )}
+            {prestamo && prestamo.estado !== "cancelado" && rol === "admin" && (
+              <Dropdown.Item onClick={() => onCancelar(prestamo._id)} className="d-flex align-items-center text-dark">
+                <i className="bi bi-x-circle me-2 detalle-prestamo-icon"></i>
+                Cancelar
               </Dropdown.Item>
             )}
             {rol === "admin" && (

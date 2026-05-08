@@ -115,6 +115,7 @@ const getProximosACobrar = async (req, res) => {
 const getDashboardCobrador = async (req, res) => {
   try {
     const cobradorId = req.idUsuario;
+    const { tablaId } = req.query;
     
     if (!cobradorId) {
       return res.status(400).json({
@@ -124,7 +125,7 @@ const getDashboardCobrador = async (req, res) => {
       });
     }
 
-    const resultado = await obtenerDashboardCobrador(cobradorId);
+    const resultado = await obtenerDashboardCobrador(cobradorId, tablaId);
     return res.status(resultado.status).json(resultado);
   } catch (error) {
     console.error("Error en controller getDashboardCobrador:", error);

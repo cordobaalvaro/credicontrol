@@ -10,6 +10,7 @@ const {
   actualizarPrestamo,
   desactivarPrestamo,
   activarPrestamo,
+  cancelarPrestamo,
 } = require("../controllers/prestamos.controllers");
 const auth = require("../middlewares/auth");
 
@@ -20,6 +21,7 @@ router.get("/:id", auth("admin", "cobrador"), obtenerPrestamoPorId);
 router.put("/:id", auth("admin"), actualizarPrestamo);
 router.put("/:id/desactivar", auth("admin"), desactivarPrestamo);
 router.put("/:id/activar", auth("admin"), activarPrestamo);
+router.put("/:id/cancelar", auth("admin"), cancelarPrestamo);
 router.delete("/:id", auth("admin"), eliminarPrestamo);
 
 module.exports = router;

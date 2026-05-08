@@ -10,6 +10,7 @@ import {
     IconTrash,
     IconCheck,
     IconAlertTriangle,
+    IconX,
 } from "@tabler/icons-react"
 
 import { formatARS } from "../../../helpers/currency"
@@ -23,6 +24,7 @@ const TablaSemanalListItem = ({
     onMontoChange,
     showGuardarItem = false,
     onGuardarItem,
+    onReset,
     guardandoItem = false,
     showCargar = false,
     onCargar,
@@ -306,6 +308,18 @@ const TablaSemanalListItem = ({
                             {guardandoItem ? <Spinner animation="border" size="sm" className="me-2" /> : null}
                             Guardar
                         </Button>
+                        {item.estado === "reportado" && onReset && (
+                            <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => onReset(item._id)}
+                                disabled={guardandoItem}
+                                className="ms-2 d-flex align-items-center"
+                                title="Quitar cobro"
+                            >
+                                <IconX size={14} />
+                            </Button>
+                        )}
                     </div>
                 ) : null}
                 {showCargar && item.estado !== "cargado" && (

@@ -489,6 +489,87 @@ export const useDetalleTablaSemanal = (tablaId) => {
         obtenerTablaActualizada()
     }
 
+    const handleRendirJornada = async () => {
+        try {
+            const itemsConCobro = (tablaLocal?.items || []).filter(it => (it.montoCobrado || 0) > 0);
+            
+            if (itemsConCobro.length === 0) {
+                Swal.fire({
+                    icon: "info",
+                    title: "Sin cobros",
+                    text: "No tienes cobros registrados para rendir hoy."
+                });
+                return;
+            }
+
+            const result = await Swal.fire({
+                title: "¿Rendir jornada?",
+                text: `Se enviarán ${itemsConCobro.length} cobros al administrador y se limpiará la tabla para mañana.`,
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí, rendir jornada",
+                cancelButtonText: "Cancelar"
+            });
+
+            if (!result.isConfirmed) return;
+
+            setSaving(true);
+            const response = await tablaSemanalService.rendirJornada(tablaLocal._id);
+            
+            if (response?.data) {
+                handleTablaActualizada(response.data);
+                Swal.fire({
+                    icon: "success",
+                    title: "Jornada rendida",
+                    text: "Los cobros han sido enviados correctamente."
+                });
+            }
+        } catch (err) {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: err?.response?.data?.msg || "Error al rendir la jornada"
+            });
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleCargarRendicion = async (rendicionId) => {
+        try {
+            const result = await Swal.fire({
+                title: "¿Cargar esta rendición?",
+                text: "Se procesarán todos los cobros de esta rendición en el sistema.",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cargar",
+                cancelButtonText: "Cancelar"
+            });
+
+            if (!result.isConfirmed) return;
+
+            setSaving(true);
+            const response = await tablaSemanalService.cargarRendicion(tablaLocal._id, rendicionId);
+            
+            if (response?.data) {
+                handleTablaActualizada(response.data);
+                Swal.fire({
+                    icon: "success",
+                    title: "Rendición cargada",
+                    text: response.msg || "Cobros procesados correctamente."
+                });
+            }
+        } catch (err) {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: err?.response?.data?.msg || "Error al cargar la rendición"
+            });
+        } finally {
+            setSaving(false);
+        }
+    };
+
     return {
         tablaLocal,
         loading,
@@ -529,5 +610,7 @@ export const useDetalleTablaSemanal = (tablaId) => {
         handleEliminarSeleccionados,
         handleTrasladoCompleto,
         handleActualizarTablas,
+        handleRendirJornada,
+        handleCargarRendicion
     }
 }

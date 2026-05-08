@@ -5,16 +5,15 @@ import {
   IconAlertTriangle,
   IconExclamationCircle,
   IconCalendarEvent,
-  IconCircleCheck
+  IconCircleCheck,
+  IconCheck
 } from "@tabler/icons-react"
 import PageHeader from "../../componentes/layout/PageHeader"
 import useDashboardCobrador from "../../hooks/useDashboardCobrador"
 import { useNavigate } from "react-router-dom"
 import "./DashboardCobrador.css"
-import MisZonasCard from "./componentes/MisZonasCard"
-import NovedadesCard from "./componentes/NovedadesCard"
-import TablaListCard from "./componentes/TablaListCard"
 import UltimaTablaSemanalCard from "./componentes/UltimaTablaSemanalCard"
+import TablaListCard from "./componentes/TablaListCard"
 import PageLoading from "../../componentes/ui/PageLoading"
 const DashboardCobrador = () => {
   const navigate = useNavigate()
@@ -35,9 +34,13 @@ const DashboardCobrador = () => {
     loadingZonas,
     loadingNovedades,
     tablaId,
+    selectedTablaId,
+    handleSeleccionarTabla,
     handleMontoInlineChange,
     handleGuardarMontoInline,
+    handleResetItem,
     handleCerrarTablaInline,
+    handleRendirJornada,
     getDireccionCobroFinal,
     hasData
   } = useDashboardCobrador()
@@ -87,84 +90,75 @@ const DashboardCobrador = () => {
       <Container fluid className="py-4">
         {}
         {}
-        <Row className="g-4 mb-4">
-          <Col md={6}>
-            <MisZonasCard
-              zonasData={zonasData}
-              loading={loadingZonas}
-              fetchPrestamosActivos={fetchPrestamosActivos}
-              fetchPrestamosVencidos={fetchPrestamosVencidos}
-            />
-          </Col>
-          <Col md={6}>
-            <NovedadesCard
-              novedadesData={novedadesData}
-              loading={loadingNovedades}
-            />
-          </Col>
-        </Row>
+
         <UltimaTablaSemanalCard
           metricasDia={metricasDia}
           onCerrarTabla={handleCerrarTablaInline}
           onVerDetalles={handleVerDetalles}
+          onRendirJornada={handleRendirJornada}
+          onSeleccionarTabla={handleSeleccionarTabla}
         />
-        {}
-        <Row className="g-3 mb-4">
+
+        <Row className="g-4 mb-4">
           <Col md={4}>
             <TablaListCard
-              title="Vencidos"
+              title="Préstamos Vencidos"
               count={metricasDia?.itemsTabla?.vencidos?.cantidad}
               montoTotal={metricasDia?.itemsTabla?.vencidos?.monto}
               items={metricasDia?.itemsTabla?.vencidos?.detalles}
               icon={IconAlertTriangle}
               variant="danger"
-              emptyMessage="No hay items vencidos"
+              emptyMessage="No hay préstamos vencidos"
               emptyIcon={IconExclamationCircle}
               getDireccionCobroFinal={getDireccionCobroFinal}
               montosInline={montosInline}
               handleMontoInlineChange={handleMontoInlineChange}
               handleGuardarMontoInline={handleGuardarMontoInline}
+              onResetItem={handleResetItem}
               savingInline={savingInline}
               tablaId={tablaId}
             />
           </Col>
           <Col md={4}>
             <TablaListCard
-              title="Activos"
+              title="Préstamos Activos"
               count={metricasDia?.itemsTabla?.activos?.cantidad}
               montoTotal={metricasDia?.itemsTabla?.activos?.monto}
               items={metricasDia?.itemsTabla?.activos?.detalles}
-              icon={IconCalendarEvent}
-              variant="warning"
-              emptyMessage="No hay próximos items"
+              icon={IconExclamationCircle}
+              variant="primary"
+              emptyMessage="No hay préstamos activos para hoy"
               emptyIcon={IconCalendarEvent}
               getDireccionCobroFinal={getDireccionCobroFinal}
               montosInline={montosInline}
               handleMontoInlineChange={handleMontoInlineChange}
               handleGuardarMontoInline={handleGuardarMontoInline}
+              onResetItem={handleResetItem}
               savingInline={savingInline}
               tablaId={tablaId}
             />
           </Col>
           <Col md={4}>
             <TablaListCard
-              title="Ya Reportados"
+              title="Ya Registrados"
               count={metricasDia?.itemsTabla?.reportados?.cantidad}
               montoTotal={metricasDia?.itemsTabla?.reportados?.monto}
               items={metricasDia?.itemsTabla?.reportados?.detalles}
               icon={IconCircleCheck}
               variant="success"
-              emptyMessage="No hay items reportados"
-              emptyIcon={IconCircleCheck}
+              emptyMessage="Aún no has registrado cobros"
+              emptyIcon={IconCheck}
               getDireccionCobroFinal={getDireccionCobroFinal}
               montosInline={montosInline}
               handleMontoInlineChange={handleMontoInlineChange}
               handleGuardarMontoInline={handleGuardarMontoInline}
+              onResetItem={handleResetItem}
               savingInline={savingInline}
               tablaId={tablaId}
             />
           </Col>
         </Row>
+
       </Container>
     </>
   )

@@ -9,8 +9,9 @@ export const dashboardService = {
   },
 
   
-  getCobradorDashboard: async () => {
-    const response = await clientAxios.get("/dashboard-cobrador");
+  getCobradorDashboard: async (tablaId = null) => {
+    const url = tablaId ? `/dashboard-cobrador?tablaId=${tablaId}` : "/dashboard-cobrador";
+    const response = await clientAxios.get(url);
     return response.data;
   },
 

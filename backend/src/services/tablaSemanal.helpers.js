@@ -8,6 +8,9 @@ const populateTabla = (query) => {
     .populate("items.cliente", "numero nombre dni zona direccionCobro direccionComercial direccion direccionCobroValor")
     .populate("items.zona", "nombre")
     .populate("items.prestamo", "numero nombre estado")
+    .populate("rendiciones.items.prestamo", "numero nombre estado")
+    .populate("rendiciones.items.cliente", "numero nombre dni zona")
+    .populate("rendiciones.cargadoPor", "nombre apellido")
 }
 
 
@@ -33,28 +36,55 @@ const recalcularTotales = async (tabla) => {
   let totalCobrado = 0;
 
   itemsToProcess.forEach(item => {
-    const monto = item.montoCuotasEsperadoSemana || 0;
+    const fInicio = new Date(tabla.fechaInicio);
+    const fInicioStr = new Date(tabla.fechaInicio).toISOString().split('T')[0];
+    const fFinStr = new Date(tabla.fechaFin).toISOString().split('T')[0];
     const deuda = item.deudaArrastrada || 0;
     const cobrado = item.montoCobrado || 0;
+
+    // Calculamos cuánto de este item es de la semana y cuánto es atrasado
+    let montoEnSemana = 0;
+    let montoAtrasado = 0;
+
+    (item.cuotasSemana || []).forEach(c => {
+      const fvStr = new Date(c.fechaVencimiento).toISOString().split('T')[0];
+      if (fvStr >= fInicioStr && fvStr <= fFinStr) {
+        montoEnSemana += (c.monto || 0);
+      } else if (fvStr < fInicioStr) {
+        montoAtrasado += (c.monto || 0);
+      }
+    });
+
+    // Si es un préstamo vencido, aseguramos que al menos sume su saldo vencido si no hay cuotas listadas
+    if (item.prestamo?.estado === "vencido" && montoAtrasado === 0) {
+      montoAtrasado = item.saldoPendienteVencimiento || 0;
+    }
+
+    totalActivos += montoEnSemana;
+    totalVencidos += montoAtrasado;
+    // El esperado global de la tabla ahora es SOLO lo de la semana
+    totalEsperado += montoEnSemana;
     
-    totalEsperado += monto;
     totalDeudaArrastrada += deuda;
     totalCobrado += cobrado;
-
-    // Categorizar por estado del préstamo
-    const estadoPrestamo = item.prestamo?.estado;
-    if (estadoPrestamo === "vencido") {
-      totalVencidos += monto;
-    } else {
-      totalActivos += monto;
-    }
   });
 
   tabla.montoTotalEsperado = totalEsperado;
   tabla.montoTotalEsperadoActivos = totalActivos;
   tabla.montoTotalEsperadoVencidos = totalVencidos;
   tabla.montoTotalDeudaArrastrada = totalDeudaArrastrada;
-  tabla.montoTotalCobrado = totalCobrado;
+
+  // El total cobrado es la suma de los montos actuales en items + los montos en rendiciones
+  let totalRendiciones = 0;
+  if (tabla.rendiciones && tabla.rendiciones.length > 0) {
+    tabla.rendiciones.forEach(rendicion => {
+      rendicion.items.forEach(it => {
+        totalRendiciones += (it.montoCobrado || 0);
+      });
+    });
+  }
+
+  tabla.montoTotalCobrado = totalCobrado + totalRendiciones;
 }
 
 
@@ -82,7 +112,7 @@ const procesarActualizacionMontos = async (tabla, itemsMontos, skipCargados = tr
       return {
         ...it.toObject(),
         montoCobrado: monto,
-        estado: it.estado === "cargado" ? "cargado" : "reportado",
+        estado: it.estado === "cargado" ? "cargado" : (monto > 0 ? "reportado" : "enviado"),
       }
     }
     return it
