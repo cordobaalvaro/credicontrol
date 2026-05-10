@@ -139,6 +139,8 @@ const tablaSemanalClientesSchema = new mongoose.Schema(
             prestamo: { type: mongoose.Schema.Types.ObjectId, ref: "Prestamo" },
             cliente: { type: mongoose.Schema.Types.ObjectId, ref: "Cliente" },
             montoCobrado: { type: Number, required: true },
+            montoCuotasEsperadoSemana: { type: Number },
+            saldoPendiente: { type: Number },
             itemIdOriginal: { type: mongoose.Schema.Types.ObjectId },
           },
         ],

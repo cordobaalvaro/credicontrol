@@ -155,12 +155,26 @@ const rendirJornadaCobrador = async (cobradorId, tablaId, observaciones = "") =>
       fechaRendicion: new Date(),
       estado: "reportada",
       observaciones,
-      items: itemsConMonto.map((it) => ({
-        prestamo: it.prestamo,
-        cliente: it.cliente,
-        montoCobrado: it.montoCobrado,
-        itemIdOriginal: it._id,
-      })),
+      items: itemsConMonto.map((it) => {
+        // El esperado que ve el cobrador en su dashboard es la suma de:
+        // 1. Las cuotas de la semana (o el esperado del item si no hay cuotasSemana)
+        // 2. La deuda arrastrada de semanas anteriores
+        const montoEsperadoSemanaBase = (it.cuotasSemana && it.cuotasSemana.length > 0)
+          ? it.cuotasSemana.reduce((sum, c) => sum + (c.monto || 0), 0)
+          : (it.montoCuotasEsperadoSemana || 0);
+        
+        // Sumamos la deuda arrastrada para que el "Valor Cuota" en el reporte sea el total que se esperaba cobrar
+        const esperadoTotalItem = montoEsperadoSemanaBase + (it.deudaArrastrada || 0);
+
+        return {
+          prestamo: it.prestamo,
+          cliente: it.cliente,
+          montoCobrado: it.montoCobrado,
+          montoCuotasEsperadoSemana: esperadoTotalItem,
+          saldoPendiente: it.saldoPendiente, // Saldo del préstamo al inicio de la semana
+          itemIdOriginal: it._id,
+        }
+      }),
     }
 
     if (!tabla.rendiciones) tabla.rendiciones = []

@@ -49,12 +49,17 @@ const cerrarTablaSemanal = async (userId, tablaId, rol) => {
       return { status: 400, msg: "La tabla no tiene items para cerrar", data: null }
     }
 
-    const faltantes = tabla.items.filter((it) => !["reportado", "cargado"].includes(it.estado))
-    if (faltantes.length) {
-      return { status: 400, msg: "No se puede cerrar la tabla: faltan items por completar", data: null }
-    }
+    // Eliminamos la validación que exigía que todos los items estén reportados/cargados
+    // const faltantes = tabla.items.filter((it) => !["reportado", "cargado"].includes(it.estado))
+    // if (faltantes.length) {
+    //   return { status: 400, msg: "No se puede cerrar la tabla: faltan items por completar", data: null }
+    // }
 
     tabla.estado = "cerrada"
+    
+    // Recalcular para que el montoTotalCobrado solo incluya rendiciones (según la nueva lógica de recalcularTotales)
+    await recalcularTotales(tabla)
+    
     await tabla.save()
 
     const tablaPopulada = await populateTabla(TablaSemanalClientesModel.findById(tablaId))
@@ -142,8 +147,119 @@ const obtenerPlanDeCuotasPrestamo = async ({ prestamoId }) => {
   }
 }
 
+const editarItemRendicion = async (userId, rol, tablaId, rendicionId, itemIdOriginal, nuevoMonto) => {
+  try {
+    const tabla = await TablaSemanalClientesModel.findById(tablaId)
+    if (!tabla) return { status: 404, msg: "Tabla semanal no encontrada", data: null }
+
+    // Verificar permisos
+    if (rol === "cobrador") {
+      if (String(tabla.cobrador) !== String(userId)) {
+        return { status: 403, msg: "No tienes permiso para editar esta tabla", data: null }
+      }
+      if (tabla.estado === "cerrada") {
+        return { status: 400, msg: "No se puede editar una tabla que ya está cerrada", data: null }
+      }
+    }
+
+    const rendicion = tabla.rendiciones.id(rendicionId)
+    if (!rendicion) return { status: 404, msg: "Rendición no encontrada", data: null }
+    
+    // Si la rendición ya fue cargada, solo el admin puede editarla (y habría que considerar si esto afecta cobros ya procesados)
+    if (rendicion.estado === "cargada" && rol !== "admin") {
+      return { status: 400, msg: "No se puede editar una rendición que ya fue procesada por administración", data: null }
+    }
+
+    const itemRendicion = rendicion.items.find(it => String(it.itemIdOriginal) === String(itemIdOriginal))
+    if (!itemRendicion) return { status: 404, msg: "Item no encontrado en la rendición", data: null }
+
+    const itemTabla = tabla.items.id(itemIdOriginal)
+    if (!itemTabla) return { status: 404, msg: "Item no encontrado en la lista original de la tabla", data: null }
+
+    // Actualizar montos
+    const montoNumerico = Number(nuevoMonto)
+    if (isNaN(montoNumerico) || montoNumerico < 0) {
+      return { status: 400, msg: "El monto debe ser un número válido mayor o igual a 0", data: null }
+    }
+
+    itemRendicion.montoCobrado = montoNumerico
+    itemTabla.montoCobrado = montoNumerico
+
+    // Recalcular los totales de la tabla
+    await recalcularTotales(tabla)
+    await tabla.save()
+
+    const tablaPopulada = await populateTabla(TablaSemanalClientesModel.findById(tablaId))
+    return { status: 200, msg: "Item de rendición actualizado correctamente", data: tablaPopulada }
+  } catch (error) {
+    return { status: 500, msg: "Error al editar item de rendición: " + error.message, data: null }
+  }
+}
+
+const eliminarRendicion = async (userId, rol, tablaId, rendicionId) => {
+  try {
+    const tabla = await TablaSemanalClientesModel.findById(tablaId)
+    if (!tabla) return { status: 404, msg: "Tabla semanal no encontrada", data: null }
+
+    // Verificar permisos
+    if (rol === "cobrador") {
+      if (String(tabla.cobrador) !== String(userId)) {
+        return { status: 403, msg: "No tienes permiso para modificar esta tabla", data: null }
+      }
+      if (tabla.estado === "cerrada") {
+        return { status: 400, msg: "No se puede eliminar un reporte de una tabla cerrada", data: null }
+      }
+    }
+
+    const rendicion = tabla.rendiciones.id(rendicionId)
+    if (!rendicion) return { status: 404, msg: "Rendición no encontrada", data: null }
+
+    // Si ya está cargada, solo admin puede (con precaución)
+    if (rendicion.estado === "cargada" && rol !== "admin") {
+      return { status: 400, msg: "No puedes eliminar una jornada que ya ha sido procesada por administración", data: null }
+    }
+
+    // Restaurar los items en la tabla principal
+    // Los items de la rendición deben volver a 'enviado' y monto 0 para que puedan ser reportados de nuevo
+    if (rendicion.items && rendicion.items.length > 0) {
+      rendicion.items.forEach(itemRend => {
+        const itemTabla = tabla.items.id(itemRend.itemIdOriginal)
+        if (itemTabla) {
+          // Resetear estado y monto cobrado en el item original de la tabla
+          itemTabla.estado = "enviado"
+          itemTabla.montoCobrado = 0
+          // Forzar a Mongoose a detectar el cambio en el subdocumento
+          itemTabla.markModified('montoCobrado')
+          itemTabla.markModified('estado')
+        }
+      })
+    }
+
+    // Eliminar la rendición del array de rendiciones
+    tabla.rendiciones.pull(rendicionId)
+
+    // Notificar a Mongoose que los arrays han cambiado
+    tabla.markModified('items')
+    tabla.markModified('rendiciones')
+
+    // Recalcular todos los totales de la tabla (montoTotalCobrado, etc)
+    // Esto sumará los montoCobrado de items (que ahora son 0) + el resto de rendiciones
+    await recalcularTotales(tabla)
+    
+    // Guardar los cambios definitivos
+    await tabla.save()
+
+    const tablaPopulada = await populateTabla(TablaSemanalClientesModel.findById(tablaId))
+    return { status: 200, msg: "Jornada eliminada correctamente", data: tablaPopulada }
+  } catch (error) {
+    return { status: 500, msg: "Error al eliminar la jornada: " + error.message, data: null }
+  }
+}
+
 module.exports = {
   obtenerTablaSemanal,
   cerrarTablaSemanal,
   obtenerPlanDeCuotasPrestamo,
+  editarItemRendicion,
+  eliminarRendicion,
 }

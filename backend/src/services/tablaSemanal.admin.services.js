@@ -539,6 +539,7 @@ const abrirTablaSemanalAdmin = async (adminId, tablaId) => {
     const tabla = await TablaSemanalClientesModel.findById(tablaId)
     if (!tabla || tabla.estado !== "cerrada") return { status: 400, msg: "No se puede abrir", data: null }
     tabla.estado = "enviada"
+    await recalcularTotales(tabla)
     await tabla.save()
     return { status: 200, msg: "Reabierta", data: await populateTabla(TablaSemanalClientesModel.findById(tablaId)) }
   } catch (error) {

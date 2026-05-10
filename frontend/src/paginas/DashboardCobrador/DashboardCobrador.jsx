@@ -97,6 +97,7 @@ const DashboardCobrador = () => {
           onVerDetalles={handleVerDetalles}
           onRendirJornada={handleRendirJornada}
           onSeleccionarTabla={handleSeleccionarTabla}
+          onTablaActualizada={refreshData}
         />
 
         <Row className="g-4 mb-4">
@@ -155,6 +156,18 @@ const DashboardCobrador = () => {
               onResetItem={handleResetItem}
               savingInline={savingInline}
               tablaId={tablaId}
+              footerAction={
+                metricasDia?.itemsTabla?.reportados?.cantidad > 0 && (
+                  <Button 
+                    variant="success" 
+                    className="w-100 d-flex align-items-center justify-content-center gap-2 py-2"
+                    onClick={handleRendirJornada}
+                  >
+                    <IconCheck size={18} />
+                    Registrar Reporte (Rendir)
+                  </Button>
+                )
+              }
             />
           </Col>
         </Row>

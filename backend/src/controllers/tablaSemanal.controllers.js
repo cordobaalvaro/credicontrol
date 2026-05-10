@@ -22,6 +22,8 @@ const {
   abrirTablaSemanalAdmin,
   rendirJornadaCobrador,
   cargarRendicionAdmin,
+  editarItemRendicion,
+  eliminarRendicion,
 } = require("../services/tablaSemanal.services")
 
 const generarTablaSemanalCtrl = async (req, res) => {
@@ -412,6 +414,45 @@ const cargarRendicionCtrl = async (req, res) => {
   }
 }
 
+const editarItemRendicionCtrl = async (req, res) => {
+  try {
+    const { id, rendicionId, itemIdOriginal } = req.params
+    const { nuevoMonto } = req.body
+    const userId = req.idUsuario
+    const rol = req.rolUsuario
+
+    const resultado = await editarItemRendicion(userId, rol, id, rendicionId, itemIdOriginal, nuevoMonto)
+    return res.status(resultado.status).json({
+      msg: resultado.msg,
+      data: resultado.data,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Error inesperado al editar item de rendición",
+      error: error.message,
+    })
+  }
+}
+
+const eliminarRendicionCtrl = async (req, res) => {
+  try {
+    const { id, rendicionId } = req.params
+    const userId = req.idUsuario
+    const rol = req.rolUsuario
+
+    const resultado = await eliminarRendicion(userId, rol, id, rendicionId)
+    return res.status(resultado.status).json({
+      msg: resultado.msg,
+      data: resultado.data,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Error inesperado al eliminar la rendición",
+      error: error.message,
+    })
+  }
+}
+
 module.exports = {
   generarTablaSemanalCtrl,
   previsualizarTotalesTablaSemanalCtrl,
@@ -436,4 +477,6 @@ module.exports = {
   obtenerUltimaTablaSemanalGeneralCtrl,
   rendirJornadaCobradorCtrl,
   cargarRendicionCtrl,
+  editarItemRendicionCtrl,
+  eliminarRendicionCtrl,
 }

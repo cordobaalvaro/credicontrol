@@ -4,7 +4,7 @@ import { IconCalendar, IconX, IconEye, IconHistory, IconChevronDown, IconChevron
 import ModalDetalleRendicion from "../../TablasSemanalesClientes/modales/ModalDetalleRendicion"
 import ModalSeleccionarTabla from "./ModalSeleccionarTabla"
 
-const UltimaTablaSemanalCard = ({ metricasDia, onCerrarTabla, onVerDetalles, onSeleccionarTabla }) => {
+const UltimaTablaSemanalCard = ({ metricasDia, onCerrarTabla, onVerDetalles, onSeleccionarTabla, onTablaActualizada }) => {
   const [showRendicionModal, setShowRendicionModal] = useState(false)
   const [showSeleccionarModal, setShowSeleccionarModal] = useState(false)
   const [rendicionSeleccionada, setRendicionSeleccionada] = useState(null)
@@ -257,6 +257,9 @@ const UltimaTablaSemanalCard = ({ metricasDia, onCerrarTabla, onVerDetalles, onS
           show={showRendicionModal}
           onHide={() => setShowRendicionModal(false)}
           rendicion={rendicionSeleccionada}
+          tabla={ultimaTabla}
+          onTablaActualizada={onTablaActualizada}
+          modoCobrador={true}
         />
 
         <ModalSeleccionarTabla 

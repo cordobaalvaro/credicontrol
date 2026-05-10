@@ -4,7 +4,7 @@ import { IconCheck, IconClock, IconUser, IconCalendar, IconEye } from "@tabler/i
 import ModalDetalleRendicion from "../modales/ModalDetalleRendicion";
 import "./TablaSemanalRendiciones.css";
 
-const TablaSemanalRendiciones = ({ rendiciones, onCargarRendicion, modoCobrador, saving }) => {
+const TablaSemanalRendiciones = ({ rendiciones, onCargarRendicion, modoCobrador, saving, tabla, onTablaActualizada }) => {
   const [showModal, setShowModal] = useState(false);
   const [rendicionSeleccionada, setRendicionSeleccionada] = useState(null);
 
@@ -120,6 +120,9 @@ const TablaSemanalRendiciones = ({ rendiciones, onCargarRendicion, modoCobrador,
         show={showModal}
         onHide={() => setShowModal(false)}
         rendicion={rendicionSeleccionada}
+        tabla={tabla}
+        onTablaActualizada={onTablaActualizada}
+        modoCobrador={modoCobrador}
       />
     </div>
   );

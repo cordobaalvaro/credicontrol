@@ -26,6 +26,8 @@ const {
   obtenerUltimaTablaSemanalGeneralCtrl,
   rendirJornadaCobradorCtrl,
   cargarRendicionCtrl,
+  editarItemRendicionCtrl,
+  eliminarRendicionCtrl,
 } = require("../controllers/tablaSemanal.controllers")
 
 
@@ -64,5 +66,7 @@ router.patch("/:tablaId/items/:itemId/modificar-esperado", auth("admin", "cobrad
 
 router.post("/:id/rendir-jornada", auth("cobrador"), rendirJornadaCobradorCtrl)
 router.put("/:id/rendicion/:rendicionId/cargar", auth("admin"), cargarRendicionCtrl)
+router.delete("/:id/rendicion/:rendicionId", auth("admin", "cobrador"), eliminarRendicionCtrl)
+router.put("/:id/rendicion/:rendicionId/items/:itemIdOriginal", auth("admin", "cobrador"), editarItemRendicionCtrl)
 
 module.exports = router

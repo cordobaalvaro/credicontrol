@@ -16,18 +16,17 @@ const populateTabla = (query) => {
 
 const recalcularTotales = async (tabla) => {
   // Para recalcular por estado, necesitamos que los préstamos estén populados o tener acceso a sus estados
-  // Si no están populados, intentamos popularlos brevemente
-  let itemsToProcess = tabla.items;
-  
-  const hasPopulatedPrestamos = itemsToProcess.length > 0 && 
-                                itemsToProcess[0].prestamo && 
-                                typeof itemsToProcess[0].prestamo === 'object' &&
-                                itemsToProcess[0].prestamo.estado;
+  const hasPopulatedPrestamos = tabla.items?.length > 0 && 
+                                tabla.items[0].prestamo && 
+                                typeof tabla.items[0].prestamo === 'object' &&
+                                tabla.items[0].prestamo.estado;
 
-  if (!hasPopulatedPrestamos && itemsToProcess.length > 0) {
-    const populated = await TablaSemanalClientesModel.findById(tabla._id).populate("items.prestamo", "estado");
-    if (populated) itemsToProcess = populated.items;
+  if (!hasPopulatedPrestamos && tabla.items?.length > 0) {
+    // Populamos directamente el objeto en memoria para no perder los cambios pendientes de guardar (montoCobrado, etc)
+    await tabla.populate("items.prestamo", "estado");
   }
+
+  let itemsToProcess = tabla.items || [];
 
   let totalEsperado = 0;
   let totalActivos = 0;
@@ -84,7 +83,14 @@ const recalcularTotales = async (tabla) => {
     });
   }
 
-  tabla.montoTotalCobrado = totalCobrado + totalRendiciones;
+  // Si la tabla está cerrada, el total cobrado oficial es solo lo que se rindió.
+  // Los montos que quedaron "sueltos" en los items no deberían sumar al total de una tabla ya finalizada
+  // ya que esos ítems están ocultos en la UI de todos modos.
+  if (tabla.estado === "cerrada") {
+    tabla.montoTotalCobrado = totalRendiciones;
+  } else {
+    tabla.montoTotalCobrado = totalCobrado + totalRendiciones;
+  }
 }
 
 

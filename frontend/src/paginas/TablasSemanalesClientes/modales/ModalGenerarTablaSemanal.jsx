@@ -60,7 +60,7 @@ const ModalGenerarTablaSemanal = ({ show, onHide, onTablaCreada }) => {
 
             <div className="col-md-6 mb-4">
               <Form.Label className="fw-bold text-muted small text-uppercase mb-2">2. Ámbito de Zonas</Form.Label>
-              <div className="d-flex gap-3 mt-1">
+              <div className="d-flex flex-column flex-sm-row gap-3 mt-1">
                 <Form.Check
                   type="radio"
                   label="Todas las zonas"
@@ -104,7 +104,7 @@ const ModalGenerarTablaSemanal = ({ show, onHide, onTablaCreada }) => {
           <div className="row">
             <div className="col-md-6 mb-4">
               <Form.Label className="fw-bold text-muted small text-uppercase mb-2">3. Período (Lunes a Domingo)</Form.Label>
-              <div className="d-flex gap-2">
+              <div className="d-flex flex-column flex-sm-row gap-2">
                 <Form.Control
                   type="date"
                   value={fechaInicio}
@@ -161,7 +161,7 @@ const ModalGenerarTablaSemanal = ({ show, onHide, onTablaCreada }) => {
               </div>
             ) : previewData ? (
               <div className="animate__animated animate__fadeIn">
-                <div className="alert alert-info border-0 shadow-sm d-flex justify-content-between align-items-center mb-4">
+                <div className="alert alert-info border-0 shadow-sm d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-3">
                   <div>
                     <div className="small opacity-75">Esperado calculado (Activos):</div>
                     <div className="h4 fw-bold mb-0">
@@ -172,14 +172,14 @@ const ModalGenerarTablaSemanal = ({ show, onHide, onTablaCreada }) => {
                       Calculado sobre {previewData.cantidadItems} préstamos.
                     </div>
                   </div>
-                  <div className="text-end">
+                  <div className="text-sm-end border-top border-info border-opacity-10 pt-2 pt-sm-0 mt-sm-0">
                     <div className="small opacity-75">Total (inc. Vencidos):</div>
                     <div className="h5 fw-bold mb-0">${previewData.montoTotalEsperado?.toLocaleString('es-AR')}</div>
                   </div>
                 </div>
 
                 <div className="mb-3">
-                  <div className="d-flex gap-4 mb-3">
+                  <div className="d-flex flex-column flex-sm-row gap-3 gap-sm-4 mb-3">
                     <Form.Check
                       type="radio"
                       label={<strong>Usar esperado automático</strong>}

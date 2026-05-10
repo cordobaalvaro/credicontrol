@@ -177,35 +177,47 @@ const DetalleTablaSemanal = () => {
         </div>
         <div className="modal-detalles-body">
           <TablaSemanalInfoSection tabla={tablaLocal} />
-          <TablaSemanalItemsList
-            key={forceUpdate}
-            tabla={tablaLocal}
-            modoCobrador={modoCobrador}
-            onTablaActualizada={handleTablaActualizada}
-            modoEdicionAdmin={modoEdicionAdmin}
-            onGuardarEdicionAdmin={() => { }}
-            onEliminarItem={handleEliminarItem}
-            modoTraslado={modoTraslado}
-            modoEliminacion={modoEliminacion}
-            itemsSeleccionados={itemsSeleccionados}
-            onSeleccionarItem={handleSeleccionarItem}
-            montos={montos}
-            onMontoChange={handleMontoChange}
-            saving={saving}
-            error={error}
-            planesDeCuotas={planesDeCuotas}
-            cuotasSeleccionadas={cuotasSeleccionadas}
-            onCuotaSeleccionChange={handleCuotaSeleccionChange}
-            onObtenerPlanDeCuotas={obtenerPlanDeCuotas}
-            loadingPlanes={loadingPlanes}
-            montosEsperados={montosEsperados}
-            onMontoEsperadoChange={handleMontoEsperadoChange}
-          />
+          {tablaLocal?.estado !== "cerrada" ? (
+            <TablaSemanalItemsList
+              key={forceUpdate}
+              tabla={tablaLocal}
+              modoCobrador={modoCobrador}
+              onTablaActualizada={handleTablaActualizada}
+              modoEdicionAdmin={modoEdicionAdmin}
+              onGuardarEdicionAdmin={() => { }}
+              onEliminarItem={handleEliminarItem}
+              modoTraslado={modoTraslado}
+              modoEliminacion={modoEliminacion}
+              itemsSeleccionados={itemsSeleccionados}
+              onSeleccionarItem={handleSeleccionarItem}
+              montos={montos}
+              onMontoChange={handleMontoChange}
+              saving={saving}
+              error={error}
+              planesDeCuotas={planesDeCuotas}
+              cuotasSeleccionadas={cuotasSeleccionadas}
+              onCuotaSeleccionChange={handleCuotaSeleccionChange}
+              onObtenerPlanDeCuotas={obtenerPlanDeCuotas}
+              loadingPlanes={loadingPlanes}
+              montosEsperados={montosEsperados}
+              onMontoEsperadoChange={handleMontoEsperadoChange}
+            />
+          ) : (
+            <Alert variant="info" className="d-flex align-items-center gap-2 py-4 shadow-sm border-0 bg-info bg-opacity-10 text-info rounded-3">
+              <IconLock size={24} />
+              <div>
+                <div className="fw-bold">Tabla cerrada</div>
+                <div className="small">La tabla ha sido cerrada. Solo puedes ver el historial de rendiciones. Los ítems volverán a estar visibles si un administrador abre la tabla nuevamente.</div>
+              </div>
+            </Alert>
+          )}
           <TablaSemanalRendiciones
             rendiciones={tablaLocal?.rendiciones}
             onCargarRendicion={handleCargarRendicion}
             modoCobrador={modoCobrador}
             saving={saving}
+            tabla={tablaLocal}
+            onTablaActualizada={handleTablaActualizada}
           />
         </div>
         <div className="modal-detalles-footer d-flex align-items-center gap-2">

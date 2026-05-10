@@ -54,7 +54,14 @@
 
 .cliente-container .info-section h5 {
   color: var(--verde-principal);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px solid rgba(25, 135, 84, 0.1);
+  padding-bottom: 0.75rem;
 }
 
 .cliente-prestamos-title {
@@ -88,28 +95,36 @@
 .cliente-info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
-  margin-top: 0.5rem;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .cliente-info-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
 }
 
 .cliente-info-card {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
+  gap: 1.25rem;
+  padding: 0.85rem 1.25rem;
   background: var(--blanco);
   border-radius: var(--radio-lg);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  transition: var(--transicion-rapida);
-  box-shadow: var(--sombra-xs);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
   min-width: 0;
   width: 100%;
 }
 
 .cliente-info-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.1);
-  border-color: rgba(34, 197, 94, 0.2);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.25);
+  background: linear-gradient(135deg, #fff 0%, #f0fdf4 100%);
 }
 
 .cliente-info-card-icon {
@@ -120,8 +135,9 @@
   height: 42px;
   border-radius: var(--radio-md);
   flex-shrink: 0;
-  background: rgba(25, 135, 84, 0.1);
+  background: rgba(25, 135, 84, 0.08);
   color: var(--verde-principal);
+  border: 1px solid rgba(25, 135, 84, 0.1);
 }
 
 .cliente-info-card-content {
@@ -133,33 +149,22 @@
 }
 
 .cliente-info-card-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  color: var(--gris-400);
+  color: var(--gris-500);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.15rem;
 }
 
 .cliente-info-card-value {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--gris-900);
-  overflow: hidden;
-  word-break: break-word;
+  line-height: 1.4;
 }
 
-@media (max-width: 1200px) {
-  .cliente-info-grid {
-    gap: 1rem;
-  }
-}
-
-@media (max-width: 1200px) {
-  .cliente-info-grid {
-    /* grid-template-columns: 1fr; */
-    gap: 0.85rem;
-  }
-}
+/* Redundant media queries removed as grid is now a column */
 
 @media (max-width: 576px) {
   .cliente-info-card {

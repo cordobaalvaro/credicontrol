@@ -15,6 +15,7 @@ import {
   IconChevronRight,
   IconTool,
   IconSelector,
+  IconX,
 } from "@tabler/icons-react"
 import PageLoading from "../../componentes/ui/PageLoading";
 const PaginaPlanes = () => {
@@ -228,7 +229,7 @@ const PaginaPlanes = () => {
                               onClick={() => removePlan(idx)}
                               title="Eliminar plan"
                             >
-                              âœ•
+                              <IconX size={16} />
                             </button>
                           )}
                         </div>

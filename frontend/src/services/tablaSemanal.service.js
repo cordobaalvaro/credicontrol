@@ -181,6 +181,19 @@ export const tablaSemanalService = {
   cargarRendicion: async (id, rendicionId) => {
     const response = await clientAxios.put(`/tablas-semanal/${id}/rendicion/${rendicionId}/cargar`, {});
     return response.data;
+  },
+
+  editarItemRendicion: async (id, rendicionId, itemIdOriginal, nuevoMonto) => {
+    const response = await clientAxios.put(
+      `/tablas-semanal/${id}/rendicion/${rendicionId}/items/${itemIdOriginal}`,
+      { nuevoMonto }
+    );
+    return response.data;
+  },
+
+  eliminarRendicion: async (id, rendicionId) => {
+    const response = await clientAxios.delete(`/tablas-semanal/${id}/rendicion/${rendicionId}`);
+    return response.data;
   }
 };
 

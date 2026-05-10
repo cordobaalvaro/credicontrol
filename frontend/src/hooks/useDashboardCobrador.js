@@ -66,7 +66,25 @@ const useDashboardCobrador = () => {
       if (showLoading) setLoading(false)
     }
   }
-  const refreshData = async (showLoading = true) => {
+  const refreshData = async (param = true) => {
+    // Si recibimos un objeto (los datos actualizados de la tabla), actualizamos el estado directamente
+    // Esto evita un fetch innecesario y mantiene la UI fluida (sin cierres de modales)
+    if (param && typeof param === 'object' && param._id) {
+      setDashboardData(prev => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          metricasDia: {
+            ...prev.metricasDia,
+            ultimaTabla: param
+          }
+        }
+      })
+      return
+    }
+    
+    // Si es un booleano, lo usamos como showLoading
+    const showLoading = typeof param === 'boolean' ? param : true
     await fetchDashboardData(showLoading, selectedTablaId)
   }
   const fetchMetricasDia = async () => {
